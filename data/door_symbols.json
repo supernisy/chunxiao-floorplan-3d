@@ -1,0 +1,610 @@
+[
+  {
+    "cluster": 1,
+    "centroid_pt": [
+      487.3,
+      146.5
+    ],
+    "leaf_m": 0.712,
+    "max_arc_dist_m": 0.716,
+    "type": "swing",
+    "opening_m": 0.712,
+    "hinge_pt": [
+      473.8,
+      126.8
+    ],
+    "free_pt": [
+      473.8,
+      159.1
+    ],
+    "opening_pt": [
+      [
+        473.8,
+        126.8
+      ],
+      [
+        506.1,
+        126.8
+      ]
+    ],
+    "hinge_wall_dist_m": 0.077,
+    "other_wall_dist_m": 0.163,
+    "confidence": "high"
+  },
+  {
+    "cluster": 2,
+    "centroid_pt": [
+      692.1,
+      186.6
+    ],
+    "leaf_m": 0.804,
+    "max_arc_dist_m": 0.811,
+    "type": "swing",
+    "opening_m": 0.804,
+    "hinge_pt": [
+      676.9,
+      164.5
+    ],
+    "free_pt": [
+      676.9,
+      201.0
+    ],
+    "opening_pt": [
+      [
+        676.9,
+        164.5
+      ],
+      [
+        713.4,
+        164.5
+      ]
+    ],
+    "hinge_wall_dist_m": 0.112,
+    "other_wall_dist_m": 0.776,
+    "confidence": "high"
+  },
+  {
+    "cluster": 5,
+    "centroid_pt": [
+      598.0,
+      208.5
+    ],
+    "leaf_m": 0.78,
+    "max_arc_dist_m": 0.052,
+    "type": "opening",
+    "opening_m": 0.78,
+    "hinge_pt": [
+      575.5,
+      208.3
+    ],
+    "free_pt": [
+      610.9,
+      208.3
+    ],
+    "opening_pt": [
+      [
+        575.5,
+        208.3
+      ],
+      [
+        610.9,
+        208.3
+      ]
+    ],
+    "hinge_wall_dist_m": 0.0,
+    "other_wall_dist_m": 0.737,
+    "confidence": "high"
+  },
+  {
+    "cluster": 3,
+    "centroid_pt": [
+      176.7,
+      220.3
+    ],
+    "leaf_m": 0.899,
+    "max_arc_dist_m": 0.936,
+    "type": "swing",
+    "opening_m": 0.899,
+    "hinge_pt": [
+      160.9,
+      242.4
+    ],
+    "free_pt": [
+      160.9,
+      201.6
+    ],
+    "opening_pt": [
+      [
+        160.9,
+        242.4
+      ],
+      [
+        201.7,
+        242.4
+      ]
+    ],
+    "hinge_wall_dist_m": 0.0,
+    "other_wall_dist_m": 0.014,
+    "confidence": "high"
+  },
+  {
+    "cluster": 4,
+    "centroid_pt": [
+      436.3,
+      220.4
+    ],
+    "leaf_m": 0.899,
+    "max_arc_dist_m": 0.931,
+    "type": "swing",
+    "opening_m": 0.899,
+    "hinge_pt": [
+      451.9,
+      242.4
+    ],
+    "free_pt": [
+      451.9,
+      201.6
+    ],
+    "opening_pt": [
+      [
+        451.9,
+        242.4
+      ],
+      [
+        411.1,
+        242.4
+      ]
+    ],
+    "hinge_wall_dist_m": 0.0,
+    "other_wall_dist_m": 0.014,
+    "confidence": "high"
+  },
+  {
+    "cluster": 7,
+    "centroid_pt": [
+      410.7,
+      273.8
+    ],
+    "leaf_m": 0.554,
+    "max_arc_dist_m": 0.397,
+    "type": "opening",
+    "opening_m": 0.554,
+    "hinge_pt": [
+      402.7,
+      259.2
+    ],
+    "free_pt": [
+      420.4,
+      277.0
+    ],
+    "opening_pt": [
+      [
+        402.7,
+        259.2
+      ],
+      [
+        420.4,
+        277.0
+      ]
+    ],
+    "hinge_wall_dist_m": 0.0,
+    "other_wall_dist_m": 0.281,
+    "confidence": "high"
+  },
+  {
+    "cluster": 9,
+    "centroid_pt": [
+      298.0,
+      290.1
+    ],
+    "leaf_m": 0.554,
+    "max_arc_dist_m": 0.4,
+    "type": "opening",
+    "opening_m": 0.554,
+    "hinge_pt": [
+      312.6,
+      282.1
+    ],
+    "free_pt": [
+      294.8,
+      299.9
+    ],
+    "opening_pt": [
+      [
+        312.6,
+        282.1
+      ],
+      [
+        294.8,
+        299.9
+      ]
+    ],
+    "hinge_wall_dist_m": 0.0,
+    "other_wall_dist_m": 0.281,
+    "confidence": "high"
+  },
+  {
+    "cluster": 8,
+    "centroid_pt": [
+      253.3,
+      293.1
+    ],
+    "leaf_m": 0.739,
+    "max_arc_dist_m": 0.531,
+    "type": "opening",
+    "opening_m": 0.739,
+    "hinge_pt": [
+      272.8,
+      282.1
+    ],
+    "free_pt": [
+      249.2,
+      305.9
+    ],
+    "opening_pt": [
+      [
+        272.8,
+        282.1
+      ],
+      [
+        249.2,
+        305.9
+      ]
+    ],
+    "hinge_wall_dist_m": 0.0,
+    "other_wall_dist_m": 0.407,
+    "confidence": "high"
+  },
+  {
+    "cluster": 6,
+    "centroid_pt": [
+      738.0,
+      352.8
+    ],
+    "leaf_m": 1.138,
+    "max_arc_dist_m": 0.097,
+    "type": "opening",
+    "opening_m": 1.138,
+    "hinge_pt": [
+      736.3,
+      352.8
+    ],
+    "free_pt": [
+      736.3,
+      404.4
+    ],
+    "opening_pt": [
+      [
+        736.3,
+        352.8
+      ],
+      [
+        736.3,
+        404.4
+      ]
+    ],
+    "hinge_wall_dist_m": 0.126,
+    "other_wall_dist_m": 0.126,
+    "confidence": "high"
+  },
+  {
+    "cluster": 10,
+    "centroid_pt": [
+      174.8,
+      368.8
+    ],
+    "leaf_m": 0.989,
+    "max_arc_dist_m": 1.027,
+    "type": "swing",
+    "opening_m": 0.989,
+    "hinge_pt": [
+      157.8,
+      393.1
+    ],
+    "free_pt": [
+      157.8,
+      348.2
+    ],
+    "opening_pt": [
+      [
+        157.8,
+        393.1
+      ],
+      [
+        202.6,
+        393.1
+      ]
+    ],
+    "hinge_wall_dist_m": 0.0,
+    "other_wall_dist_m": 0.014,
+    "confidence": "high"
+  },
+  {
+    "cluster": 11,
+    "centroid_pt": [
+      437.3,
+      369.4
+    ],
+    "leaf_m": 0.923,
+    "max_arc_dist_m": 0.885,
+    "type": "swing",
+    "opening_m": 0.923,
+    "hinge_pt": [
+      450.8,
+      391.9
+    ],
+    "free_pt": [
+      450.8,
+      350.0
+    ],
+    "opening_pt": [
+      [
+        450.8,
+        391.9
+      ],
+      [
+        408.9,
+        391.9
+      ]
+    ],
+    "hinge_wall_dist_m": 0.042,
+    "other_wall_dist_m": 0.0,
+    "confidence": "high"
+  },
+  {
+    "cluster": 13,
+    "centroid_pt": [
+      353.5,
+      398.5
+    ],
+    "leaf_m": 1.016,
+    "max_arc_dist_m": 0.059,
+    "type": "opening",
+    "opening_m": 1.016,
+    "hinge_pt": [
+      330.4,
+      397.3
+    ],
+    "free_pt": [
+      376.5,
+      397.3
+    ],
+    "opening_pt": [
+      [
+        330.4,
+        397.3
+      ],
+      [
+        376.5,
+        397.3
+      ]
+    ],
+    "hinge_wall_dist_m": 0.0,
+    "other_wall_dist_m": 0.0,
+    "confidence": "high"
+  },
+  {
+    "cluster": 12,
+    "centroid_pt": [
+      259.2,
+      398.6
+    ],
+    "leaf_m": 1.016,
+    "max_arc_dist_m": 0.059,
+    "type": "opening",
+    "opening_m": 1.016,
+    "hinge_pt": [
+      282.3,
+      397.3
+    ],
+    "free_pt": [
+      236.2,
+      397.3
+    ],
+    "opening_pt": [
+      [
+        282.3,
+        397.3
+      ],
+      [
+        236.2,
+        397.3
+      ]
+    ],
+    "hinge_wall_dist_m": 0.0,
+    "other_wall_dist_m": 0.0,
+    "confidence": "high"
+  },
+  {
+    "cluster": 14,
+    "centroid_pt": [
+      701.7,
+      545.1
+    ],
+    "leaf_m": 0.712,
+    "max_arc_dist_m": 0.716,
+    "type": "swing",
+    "opening_m": 0.712,
+    "hinge_pt": [
+      721.3,
+      558.5
+    ],
+    "free_pt": [
+      689.0,
+      558.5
+    ],
+    "opening_pt": [
+      [
+        721.3,
+        558.5
+      ],
+      [
+        721.3,
+        526.2
+      ]
+    ],
+    "hinge_wall_dist_m": 0.049,
+    "other_wall_dist_m": 0.582,
+    "confidence": "high"
+  },
+  {
+    "cluster": 16,
+    "centroid_pt": [
+      517.3,
+      579.8
+    ],
+    "leaf_m": 0.802,
+    "max_arc_dist_m": 0.815,
+    "type": "swing",
+    "opening_m": 0.802,
+    "hinge_pt": [
+      495.2,
+      564.7
+    ],
+    "free_pt": [
+      531.6,
+      564.7
+    ],
+    "opening_pt": [
+      [
+        495.2,
+        564.7
+      ],
+      [
+        495.2,
+        601.1
+      ]
+    ],
+    "hinge_wall_dist_m": 0.105,
+    "other_wall_dist_m": 0.242,
+    "confidence": "high"
+  },
+  {
+    "cluster": 15,
+    "centroid_pt": [
+      627.2,
+      583.3
+    ],
+    "leaf_m": 0.804,
+    "max_arc_dist_m": 0.808,
+    "type": "swing",
+    "opening_m": 0.804,
+    "hinge_pt": [
+      649.3,
+      598.3
+    ],
+    "free_pt": [
+      612.8,
+      598.3
+    ],
+    "opening_pt": [
+      [
+        649.3,
+        598.3
+      ],
+      [
+        649.3,
+        561.8
+      ]
+    ],
+    "hinge_wall_dist_m": 0.105,
+    "other_wall_dist_m": 0.688,
+    "confidence": "high"
+  },
+  {
+    "cluster": 18,
+    "centroid_pt": [
+      485.1,
+      623.0
+    ],
+    "leaf_m": 0.709,
+    "max_arc_dist_m": 0.72,
+    "type": "swing",
+    "opening_m": 0.709,
+    "hinge_pt": [
+      471.7,
+      642.6
+    ],
+    "free_pt": [
+      471.7,
+      610.4
+    ],
+    "opening_pt": [
+      [
+        471.7,
+        642.6
+      ],
+      [
+        503.8,
+        642.6
+      ]
+    ],
+    "hinge_wall_dist_m": 0.091,
+    "other_wall_dist_m": 0.554,
+    "confidence": "high"
+  },
+  {
+    "cluster": 17,
+    "centroid_pt": [
+      562.1,
+      623.9
+    ],
+    "leaf_m": 0.802,
+    "max_arc_dist_m": 0.815,
+    "type": "swing",
+    "opening_m": 0.802,
+    "hinge_pt": [
+      547.0,
+      646.0
+    ],
+    "free_pt": [
+      547.0,
+      609.6
+    ],
+    "opening_pt": [
+      [
+        547.0,
+        646.0
+      ],
+      [
+        583.4,
+        646.0
+      ]
+    ],
+    "hinge_wall_dist_m": 0.105,
+    "other_wall_dist_m": 0.779,
+    "confidence": "high"
+  },
+  {
+    "cluster": 19,
+    "centroid_pt": [
+      743.8,
+      704.7
+    ],
+    "leaf_m": 0.508,
+    "max_arc_dist_m": 0.051,
+    "type": "opening",
+    "opening_m": 0.508,
+    "hinge_pt": [
+      720.8,
+      705.0
+    ],
+    "free_pt": [
+      743.8,
+      705.0
+    ],
+    "opening_pt": [
+      [
+        720.8,
+        705.0
+      ],
+      [
+        743.8,
+        705.0
+      ]
+    ],
+    "hinge_wall_dist_m": 0.098,
+    "other_wall_dist_m": 0.098,
+    "confidence": "high"
+  }
+]

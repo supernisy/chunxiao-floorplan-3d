@@ -1,0 +1,702 @@
+{
+  "page_count": 1,
+  "drawings_bbox_points": [
+    2.0,
+    2.760009765625,
+    1015.0399780273438,
+    840.0
+  ],
+  "color_hex_counter": {
+    "#000000": 2,
+    "#0089B8": 25,
+    "#00FF00": 110,
+    "#FFFF00": 6,
+    "#FF9F7E": 37,
+    "#00FFFF": 155,
+    "#0000FF": 209,
+    "#006DDD": 1,
+    "#DDA46D": 177,
+    "#FF7E00": 114,
+    "#6DDDDD": 72,
+    "#5CB800": 26,
+    "#808080": 12200,
+    "#DCDCDC": 6,
+    "#00B8B8": 140,
+    "#BEFF7E": 60,
+    "#FF0000": 75,
+    "#FF3E00": 4,
+    "#535353": 1,
+    "#89B800": 7,
+    "#F9F9F9": 6,
+    "#B85C00": 3,
+    "#DD00A4": 3,
+    "#B8735C": 1,
+    "#FF00FF": 268,
+    "#5C89B8": 12,
+    "#BE7EFF": 7
+  },
+  "layer_counter": {
+    "0": 41,
+    "P-TEXT": 235,
+    "A-平-看线.........FLOR-LEVEL": 91,
+    "P-DIM": 143,
+    "A-通-墙...........COMM-WALL": 6,
+    "户型刷图层$0$A-WALL-FNSH": 37,
+    "户型刷图层$0$A-ELVT": 8,
+    "户型刷图层$0$A-STRS": 4,
+    "户型刷图层$0$A-EQPM-HYDR": 9,
+    "户型刷图层$0$A-EQPM": 4,
+    "A-通-门窗剖线.....COMM-GLAZ-SECT": 177,
+    "P-WALL": 469,
+    "P-DOOR": 874,
+    "DIM_SYMB": 8,
+    "A-平-楼梯.........FLOR-STAIR": 72,
+    "A-平-栏杆扶手.....FLOR-RAIL": 26,
+    "P-WALL FIN": 48,
+    "P-FURNITURE": 10689,
+    "P-TUBE": 6,
+    "P-TOILET": 673,
+    "zg-bzc-139zhongjiantao$1$A-PIPE": 76,
+    "I-FURNITURE-FIX": 14,
+    "S-柱墙-填充.......COLUWL-HATCH": 55,
+    "S-柱墙-模板线.....COLUWL-LINE1": 4,
+    "P-EQU-强弱电箱": 70,
+    "E-dim": 126,
+    "A_住宅墙身大样$0$A-平-装饰剖线.....FLOR-DECO-SECT": 7,
+    "空调设备标注": 6,
+    "水管": 2,
+    "A-通-设备.........COMM-EQPM": 3,
+    "-P-VPIPE-污水": 1,
+    "-P-VPIPE-其它": 1,
+    "-P-VPIPE-废水": 1,
+    "G15G19-PLAN-P$0$$0$A-HOLE-MECH": 3,
+    "G15G19-PLAN-P$0$$1$A-ANNO-LEGN-HOLE": 1,
+    "A-平-家具.........FLOR-FURN": 12,
+    "PUB_TITLE": 12,
+    "H-Y   可移动家具": 13,
+    "H-Y   人物标注": 94
+  },
+  "color_layer": {
+    "#000000|0": 1,
+    "None|P-TEXT": 235,
+    "#0089B8|A-平-看线.........FLOR-LEVEL": 25,
+    "#00FF00|P-DIM": 60,
+    "#00FF00|0": 40,
+    "None|P-DIM": 83,
+    "#FFFF00|A-通-墙...........COMM-WALL": 6,
+    "#FF9F7E|户型刷图层$0$A-WALL-FNSH": 37,
+    "#00FFFF|户型刷图层$0$A-ELVT": 8,
+    "#00FFFF|户型刷图层$0$A-STRS": 4,
+    "#0000FF|户型刷图层$0$A-EQPM-HYDR": 9,
+    "#006DDD|户型刷图层$0$A-EQPM": 1,
+    "None|户型刷图层$0$A-EQPM": 3,
+    "#DDA46D|A-通-门窗剖线.....COMM-GLAZ-SECT": 177,
+    "#0000FF|P-WALL": 200,
+    "#FF7E00|P-DOOR": 113,
+    "#00FF00|DIM_SYMB": 8,
+    "#6DDDDD|A-平-楼梯.........FLOR-STAIR": 72,
+    "#5CB800|A-平-栏杆扶手.....FLOR-RAIL": 26,
+    "#00FFFF|P-WALL FIN": 46,
+    "#808080|P-FURNITURE": 10686,
+    "#DCDCDC|P-TUBE": 6,
+    "#00B8B8|P-TOILET": 117,
+    "#808080|P-TOILET": 556,
+    "#BEFF7E|zg-bzc-139zhongjiantao$1$A-PIPE": 60,
+    "#FF0000|zg-bzc-139zhongjiantao$1$A-PIPE": 12,
+    "None|zg-bzc-139zhongjiantao$1$A-PIPE": 4,
+    "#00B8B8|I-FURNITURE-FIX": 14,
+    "#808080|S-柱墙-填充.......COLUWL-HATCH": 55,
+    "#FF3E00|S-柱墙-模板线.....COLUWL-LINE1": 4,
+    "#00B8B8|P-EQU-强弱电箱": 4,
+    "None|P-EQU-强弱电箱": 3,
+    "#FF0000|P-EQU-强弱电箱": 63,
+    "#00B8B8|P-FURNITURE": 3,
+    "#00FFFF|E-dim": 84,
+    "#808080|E-dim": 42,
+    "#808080|P-DOOR": 761,
+    "#00B8B8|P-WALL FIN": 2,
+    "#535353|P-WALL": 1,
+    "#89B800|A_住宅墙身大样$0$A-平-装饰剖线.....FLOR-DECO-SECT": 7,
+    "#F9F9F9|空调设备标注": 6,
+    "#00FF00|水管": 2,
+    "None|A-平-看线.........FLOR-LEVEL": 66,
+    "#B85C00|A-通-设备.........COMM-EQPM": 3,
+    "#FF7E00|-P-VPIPE-污水": 1,
+    "#000000|-P-VPIPE-其它": 1,
+    "#00FFFF|-P-VPIPE-废水": 1,
+    "#DD00A4|G15G19-PLAN-P$0$$0$A-HOLE-MECH": 3,
+    "#B8735C|G15G19-PLAN-P$0$$1$A-ANNO-LEGN-HOLE": 1,
+    "#FF00FF|P-WALL": 268,
+    "#5C89B8|A-平-家具.........FLOR-FURN": 12,
+    "#00FFFF|PUB_TITLE": 12,
+    "#BE7EFF|H-Y   可移动家具": 7,
+    "#808080|H-Y   可移动家具": 6,
+    "#808080|H-Y   人物标注": 94
+  },
+  "widths": {
+    "0.72": 13291,
+    "0.0": 436
+  },
+  "sample": [
+    {
+      "type": "s",
+      "color": "#000000",
+      "fill": null,
+      "width": 0.7199999690055847,
+      "layer": "0",
+      "rect": [
+        2.0,
+        2.8,
+        1015.0,
+        840.0
+      ],
+      "n_items": 1
+    },
+    {
+      "type": "f",
+      "color": null,
+      "fill": "#B85C5C",
+      "width": null,
+      "layer": "P-TEXT",
+      "rect": [
+        411.2,
+        114.1,
+        416.4,
+        120.5
+      ],
+      "n_items": 326
+    },
+    {
+      "type": "f",
+      "color": null,
+      "fill": "#B85C5C",
+      "width": null,
+      "layer": "P-TEXT",
+      "rect": [
+        416.8,
+        113.9,
+        422.1,
+        120.5
+      ],
+      "n_items": 274
+    },
+    {
+      "type": "f",
+      "color": null,
+      "fill": "#B85C5C",
+      "width": null,
+      "layer": "P-TEXT",
+      "rect": [
+        422.6,
+        114.1,
+        427.8,
+        120.4
+      ],
+      "n_items": 129
+    },
+    {
+      "type": "f",
+      "color": null,
+      "fill": "#B85C5C",
+      "width": null,
+      "layer": "P-TEXT",
+      "rect": [
+        428.7,
+        113.9,
+        433.2,
+        120.5
+      ],
+      "n_items": 184
+    },
+    {
+      "type": "f",
+      "color": null,
+      "fill": "#B85C5C",
+      "width": null,
+      "layer": "P-TEXT",
+      "rect": [
+        758.5,
+        225.5,
+        765.0,
+        233.5
+      ],
+      "n_items": 379
+    },
+    {
+      "type": "f",
+      "color": null,
+      "fill": "#B85C5C",
+      "width": null,
+      "layer": "P-TEXT",
+      "rect": [
+        765.7,
+        225.4,
+        772.2,
+        233.5
+      ],
+      "n_items": 309
+    },
+    {
+      "type": "f",
+      "color": null,
+      "fill": "#B85C5C",
+      "width": null,
+      "layer": "P-TEXT",
+      "rect": [
+        772.8,
+        225.6,
+        779.4,
+        233.4
+      ],
+      "n_items": 148
+    },
+    {
+      "type": "f",
+      "color": null,
+      "fill": "#B85C5C",
+      "width": null,
+      "layer": "P-TEXT",
+      "rect": [
+        780.6,
+        225.4,
+        786.1,
+        233.5
+      ],
+      "n_items": 225
+    },
+    {
+      "type": "f",
+      "color": null,
+      "fill": "#B85C5C",
+      "width": null,
+      "layer": "P-TEXT",
+      "rect": [
+        728.6,
+        736.2,
+        734.2,
+        744.1
+      ],
+      "n_items": 263
+    },
+    {
+      "type": "f",
+      "color": null,
+      "fill": "#B85C5C",
+      "width": null,
+      "layer": "P-TEXT",
+      "rect": [
+        735.9,
+        735.8,
+        741.4,
+        744.0
+      ],
+      "n_items": 213
+    },
+    {
+      "type": "f",
+      "color": null,
+      "fill": "#B85C5C",
+      "width": null,
+      "layer": "P-TEXT",
+      "rect": [
+        761.8,
+        341.3,
+        767.4,
+        349.2
+      ],
+      "n_items": 266
+    },
+    {
+      "type": "f",
+      "color": null,
+      "fill": "#B85C5C",
+      "width": null,
+      "layer": "P-TEXT",
+      "rect": [
+        769.0,
+        340.9,
+        774.6,
+        349.1
+      ],
+      "n_items": 215
+    },
+    {
+      "type": "f",
+      "color": null,
+      "fill": "#B85C5C",
+      "width": null,
+      "layer": "P-TEXT",
+      "rect": [
+        423.7,
+        403.4,
+        429.7,
+        411.5
+      ],
+      "n_items": 345
+    },
+    {
+      "type": "f",
+      "color": null,
+      "fill": "#B85C5C",
+      "width": null,
+      "layer": "P-TEXT",
+      "rect": [
+        430.6,
+        403.4,
+        437.1,
+        411.7
+      ],
+      "n_items": 312
+    },
+    {
+      "type": "f",
+      "color": null,
+      "fill": "#B85C5C",
+      "width": null,
+      "layer": "P-TEXT",
+      "rect": [
+        374.6,
+        265.7,
+        381.1,
+        273.8
+      ],
+      "n_items": 327
+    },
+    {
+      "type": "f",
+      "color": null,
+      "fill": "#B85C5C",
+      "width": null,
+      "layer": "P-TEXT",
+      "rect": [
+        338.7,
+        266.3,
+        345.3,
+        273.8
+      ],
+      "n_items": 440
+    },
+    {
+      "type": "f",
+      "color": null,
+      "fill": "#B85C5C",
+      "width": null,
+      "layer": "P-TEXT",
+      "rect": [
+        345.0,
+        440.4,
+        351.6,
+        448.7
+      ],
+      "n_items": 231
+    },
+    {
+      "type": "f",
+      "color": null,
+      "fill": "#B85C5C",
+      "width": null,
+      "layer": "P-TEXT",
+      "rect": [
+        352.2,
+        440.5,
+        358.8,
+        448.3
+      ],
+      "n_items": 335
+    },
+    {
+      "type": "f",
+      "color": null,
+      "fill": "#B85C5C",
+      "width": null,
+      "layer": "P-TEXT",
+      "rect": [
+        360.2,
+        440.4,
+        365.8,
+        448.4
+      ],
+      "n_items": 172
+    },
+    {
+      "type": "f",
+      "color": null,
+      "fill": "#B85C5C",
+      "width": null,
+      "layer": "P-TEXT",
+      "rect": [
+        366.6,
+        440.4,
+        373.0,
+        448.7
+      ],
+      "n_items": 442
+    },
+    {
+      "type": "s",
+      "color": "#0089B8",
+      "fill": null,
+      "width": 0.7199999690055847,
+      "layer": "A-平-看线.........FLOR-LEVEL",
+      "rect": [
+        153.6,
+        72.8,
+        459.2,
+        72.8
+      ],
+      "n_items": 1
+    },
+    {
+      "type": "s",
+      "color": "#0089B8",
+      "fill": null,
+      "width": 0.7199999690055847,
+      "layer": "A-平-看线.........FLOR-LEVEL",
+      "rect": [
+        247.8,
+        81.2,
+        247.8,
+        125.2
+      ],
+      "n_items": 1
+    },
+    {
+      "type": "s",
+      "color": "#0089B8",
+      "fill": null,
+      "width": 0.7199999690055847,
+      "layer": "A-平-看线.........FLOR-LEVEL",
+      "rect": [
+        256.0,
+        81.2,
+        256.0,
+        125.2
+      ],
+      "n_items": 1
+    },
+    {
+      "type": "f",
+      "color": null,
+      "fill": "#B85C5C",
+      "width": null,
+      "layer": "P-TEXT",
+      "rect": [
+        178.0,
+        95.0,
+        184.5,
+        103.1
+      ],
+      "n_items": 389
+    },
+    {
+      "type": "f",
+      "color": null,
+      "fill": "#B85C5C",
+      "width": null,
+      "layer": "P-TEXT",
+      "rect": [
+        185.2,
+        94.9,
+        191.7,
+        103.1
+      ],
+      "n_items": 307
+    },
+    {
+      "type": "f",
+      "color": null,
+      "fill": "#B85C5C",
+      "width": null,
+      "layer": "P-TEXT",
+      "rect": [
+        192.3,
+        95.2,
+        198.9,
+        103.0
+      ],
+      "n_items": 144
+    },
+    {
+      "type": "f",
+      "color": null,
+      "fill": "#B85C5C",
+      "width": null,
+      "layer": "P-TEXT",
+      "rect": [
+        200.0,
+        94.9,
+        205.6,
+        103.1
+      ],
+      "n_items": 218
+    },
+    {
+      "type": "f",
+      "color": null,
+      "fill": "#B85C5C",
+      "width": null,
+      "layer": "P-TEXT",
+      "rect": [
+        246.3,
+        440.4,
+        252.9,
+        448.7
+      ],
+      "n_items": 231
+    },
+    {
+      "type": "f",
+      "color": null,
+      "fill": "#B85C5C",
+      "width": null,
+      "layer": "P-TEXT",
+      "rect": [
+        253.5,
+        440.5,
+        260.1,
+        448.3
+      ],
+      "n_items": 337
+    },
+    {
+      "type": "f",
+      "color": null,
+      "fill": "#B85C5C",
+      "width": null,
+      "layer": "P-TEXT",
+      "rect": [
+        261.6,
+        440.4,
+        267.2,
+        448.4
+      ],
+      "n_items": 173
+    },
+    {
+      "type": "f",
+      "color": null,
+      "fill": "#B85C5C",
+      "width": null,
+      "layer": "P-TEXT",
+      "rect": [
+        267.9,
+        440.4,
+        274.4,
+        448.7
+      ],
+      "n_items": 447
+    },
+    {
+      "type": "f",
+      "color": null,
+      "fill": "#B85C5C",
+      "width": null,
+      "layer": "P-TEXT",
+      "rect": [
+        235.9,
+        453.0,
+        242.4,
+        461.0
+      ],
+      "n_items": 228
+    },
+    {
+      "type": "f",
+      "color": null,
+      "fill": "#B85C5C",
+      "width": null,
+      "layer": "P-TEXT",
+      "rect": [
+        243.3,
+        452.8,
+        249.6,
+        461.0
+      ],
+      "n_items": 346
+    },
+    {
+      "type": "f",
+      "color": null,
+      "fill": "#B85C5C",
+      "width": null,
+      "layer": "P-TEXT",
+      "rect": [
+        250.2,
+        453.0,
+        256.8,
+        461.0
+      ],
+      "n_items": 310
+    },
+    {
+      "type": "f",
+      "color": null,
+      "fill": "#B85C5C",
+      "width": null,
+      "layer": "P-TEXT",
+      "rect": [
+        258.2,
+        452.8,
+        263.8,
+        460.8
+      ],
+      "n_items": 175
+    },
+    {
+      "type": "f",
+      "color": null,
+      "fill": "#B85C5C",
+      "width": null,
+      "layer": "P-TEXT",
+      "rect": [
+        264.6,
+        452.8,
+        271.0,
+        461.0
+      ],
+      "n_items": 452
+    },
+    {
+      "type": "f",
+      "color": null,
+      "fill": "#B85C5C",
+      "width": null,
+      "layer": "P-TEXT",
+      "rect": [
+        243.2,
+        428.4,
+        249.2,
+        436.6
+      ],
+      "n_items": 387
+    },
+    {
+      "type": "f",
+      "color": null,
+      "fill": "#B85C5C",
+      "width": null,
+      "layer": "P-TEXT",
+      "rect": [
+        250.6,
+        428.4,
+        256.8,
+        436.6
+      ],
+      "n_items": 434
+    },
+    {
+      "type": "f",
+      "color": null,
+      "fill": "#B85C5C",
+      "width": null,
+      "layer": "P-TEXT",
+      "rect": [
+        258.2,
+        428.4,
+        263.8,
+        436.3
+      ],
+      "n_items": 177
+    }
+  ]
+}

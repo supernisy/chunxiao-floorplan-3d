@@ -1,0 +1,30 @@
+# ── 依赖 / 构建产物 ──────────────────────────────────────────
+app/node_modules/
+app/dist/
+app/.vite/
+
+# ── 运行期临时文件 ───────────────────────────────────────────
+data/_edge_profile/
+data/_vite.log
+data/_edge.log
+data/_bak/
+data/*.png
+
+# ── 大体积中间产物（可由 pipeline 一键重跑生成） ───────────────
+*.npy
+# 一次性诊断大图（PDF 原文裁剪 / 叠图验证），保留理解图与截图即可
+data/v6/pdf_*.png
+data/v6/verify_*.png
+data/v6/overlay_*.png
+data/v6/unit_*.png
+data/v6/clean_*.png
+data/v6/skin*.png
+data/v6/seal*.png
+
+# ── 原始素材：只保留矢量 PDF（管线主源），其余为大文件/未使用 ──
+assets/walkthrough.mp4
+assets/chunxiao.dwg
+
+# ── 系统 ─────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db

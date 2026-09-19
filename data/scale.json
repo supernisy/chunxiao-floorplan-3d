@@ -1,0 +1,19 @@
+{
+  "method": "wall_envelope_vs_overall_width",
+  "total_width_mm": 15000,
+  "wall_envelope_points": {
+    "min_x": 128.36,
+    "max_x": 808.76,
+    "min_y": 72.72,
+    "max_y": 775.32,
+    "width_pt": 680.4,
+    "height_pt": 702.6
+  },
+  "scale_mm_per_point": 22.0459,
+  "scale_m_per_point": 0.022046,
+  "points_per_meter": 45.36,
+  "derived_height_mm": 15489,
+  "derived_height_m": 15.49,
+  "confidence": "medium",
+  "note": "Text vector-outlined; total width 15000 mm read visually from clip_top_dims.png; envelope from wall layers."
+}

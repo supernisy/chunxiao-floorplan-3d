@@ -1,0 +1,20 @@
+{
+  "zoom_px_per_pt": 3.0,
+  "img_w": 3048,
+  "img_h": 2523,
+  "groups": {
+    "wall": [
+      "P-WALL",
+      "A-通-墙...........COMM-WALL",
+      "S-柱墙-填充.......COLUWL-HATCH",
+      "S-柱墙-模板线.....COLUWL-LINE1",
+      "P-WALL FIN"
+    ],
+    "door": [
+      "P-DOOR"
+    ],
+    "glass": [
+      "A-通-门窗剖线.....COMM-GLAZ-SECT"
+    ]
+  }
+}

@@ -1,0 +1,188 @@
+PDF path: C:\Users\super\WorkBuddy\2026-09-19-02-22-25\assets\chunxiao.pdf
+page count: 1
+OCGs (layers) at doc level: {1: {'name': '0', 'intent': [], 'on': True, 'usage': None}, 2: {'name': 'P-TEXT', 'intent': [], 'on': True, 'usage': None}, 3: {'name': 'A-平-看线.........FLOR-LEVEL', 'intent': [], 'on': True, 'usage': None}, 4: {'name': 'P-DIM', 'intent': [], 'on': True, 'usage': None}, 5: {'name': 'A-通-墙...........COMM-WALL', 'intent': [], 'on': True, 'usage': None}, 6: {'name': '户型刷图层$0$A-WALL-FNSH', 'intent': [], 'on': True, 'usage': None}, 7: {'name': '户型刷图层$0$A-ELVT', 'intent': [], 'on': True, 'usage': None}, 8: {'name': '户型刷图层$0$A-STRS', 'intent': [], 'on': True, 'usage': None}, 9: {'name': '户型刷图层$0$A-EQPM-HYDR', 'intent': [], 'on': True, 'usage': None}, 10: {'name': '户型刷图层$0$A-EQPM', 'intent': [], 'on': True, 'usage': None}, 11: {'name': 'A-通-门窗剖线.....COMM-GLAZ-SECT', 'intent': [], 'on': True, 'usage': None}, 12: {'name': 'P-WALL', 'intent': [], 'on': True, 'usage': None}, 13: {'name': 'P-DOOR', 'intent': [], 'on': True, 'usage': None}, 14: {'name': 'DIM_SYMB', 'intent': [], 'on': True, 'usage': None}, 15: {'name': 'A-平-楼梯.........FLOR-STAIR', 'intent': [], 'on': True, 'usage': None}, 16: {'name': 'A-平-栏杆扶手.....FLOR-RAIL', 'intent': [], 'on': True, 'usage': None}, 17: {'name': 'P-WALL FIN', 'intent': [], 'on': True, 'usage': None}, 18: {'name': 'P-FURNITURE', 'intent': [], 'on': True, 'usage': None}, 19: {'name': 'P-TUBE', 'intent': [], 'on': True, 'usage': None}, 20: {'name': 'P-TOILET', 'intent': [], 'on': True, 'usage': None}, 21: {'name': 'zg-bzc-139zhongjiantao$1$A-PIPE', 'intent': [], 'on': True, 'usage': None}, 22: {'name': 'I-FURNITURE-FIX', 'intent': [], 'on': True, 'usage': None}, 23: {'name': 'S-柱墙-填充.......COLUWL-HATCH', 'intent': [], 'on': True, 'usage': None}, 24: {'name': 'S-柱墙-模板线.....COLUWL-LINE1', 'intent': [], 'on': True, 'usage': None}, 28: {'name': 'P-EQU-强弱电箱', 'intent': [], 'on': True, 'usage': None}, 32: {'name': 'E-dim', 'intent': [], 'on': True, 'usage': None}, 33: {'name': 'A_住宅墙身大样$0$A-平-装饰剖线.....FLOR-DECO-SECT', 'intent': [], 'on': True, 'usage': None}, 34: {'name': '空调设备标注', 'intent': [], 'on': True, 'usage': None}, 35: {'name': '水管', 'intent': [], 'on': True, 'usage': None}, 36: {'name': 'A-通-设备.........COMM-EQPM', 'intent': [], 'on': True, 'usage': None}, 37: {'name': '-P-VPIPE-污水', 'intent': [], 'on': True, 'usage': None}, 38: {'name': '-P-VPIPE-其它', 'intent': [], 'on': True, 'usage': None}, 39: {'name': '-P-VPIPE-废水', 'intent': [], 'on': True, 'usage': None}, 40: {'name': 'G15G19-PLAN-P$0$$0$A-HOLE-MECH', 'intent': [], 'on': True, 'usage': None}, 41: {'name': 'G15G19-PLAN-P$0$$1$A-ANNO-LEGN-HOLE', 'intent': [], 'on': True, 'usage': None}, 42: {'name': 'A-平-家具.........FLOR-FURN', 'intent': [], 'on': True, 'usage': None}, 43: {'name': 'PUB_TITLE', 'intent': [], 'on': True, 'usage': None}, 44: {'name': 'H-Y   可移动家具', 'intent': [], 'on': True, 'usage': None}, 45: {'name': 'H-Y   人物标注', 'intent': [], 'on': True, 'usage': None}}
+
+--- page 0 rect=Rect(0.0, 0.0, 1191.0, 842.0) rotation=0 ---
+page.get_layers() err: 'Page' object has no attribute 'get_layers'
+drawings count: 14121
+
+TOTAL primitive items: 92501
+drawings bbox (points): Rect(2.0, 2.760009765625, 1015.0399780273438, 840.0)
+
+--- primitive type counts ---
+  s: 13305
+  fs: 422
+  f: 394
+
+--- distinct stroke colors (hex) ---
+  #808080: 12200
+  #FF00FF: 268
+  #0000FF: 209
+  #DDA46D: 177
+  #00FFFF: 155
+  #00B8B8: 140
+  #FF7E00: 114
+  #00FF00: 110
+  #FF0000: 75
+  #6DDDDD: 72
+  #BEFF7E: 60
+  #FF9F7E: 37
+  #5CB800: 26
+  #0089B8: 25
+  #5C89B8: 12
+  #89B800: 7
+  #BE7EFF: 7
+  #FFFF00: 6
+  #DCDCDC: 6
+  #F9F9F9: 6
+  #FF3E00: 4
+  #B85C00: 3
+  #DD00A4: 3
+  #000000: 2
+  #006DDD: 1
+  #535353: 1
+  #B8735C: 1
+
+--- distinct layers (OCG) ---
+  P-FURNITURE: 10689
+  P-DOOR: 874
+  P-TOILET: 673
+  P-WALL: 469
+  P-TEXT: 235
+  A-通-门窗剖线.....COMM-GLAZ-SECT: 177
+  P-DIM: 143
+  E-dim: 126
+  H-Y   人物标注: 94
+  A-平-看线.........FLOR-LEVEL: 91
+  zg-bzc-139zhongjiantao$1$A-PIPE: 76
+  A-平-楼梯.........FLOR-STAIR: 72
+  P-EQU-强弱电箱: 70
+  S-柱墙-填充.......COLUWL-HATCH: 55
+  P-WALL FIN: 48
+  0: 41
+  户型刷图层$0$A-WALL-FNSH: 37
+  A-平-栏杆扶手.....FLOR-RAIL: 26
+  I-FURNITURE-FIX: 14
+  H-Y   可移动家具: 13
+  A-平-家具.........FLOR-FURN: 12
+  PUB_TITLE: 12
+  户型刷图层$0$A-EQPM-HYDR: 9
+  户型刷图层$0$A-ELVT: 8
+  DIM_SYMB: 8
+  A_住宅墙身大样$0$A-平-装饰剖线.....FLOR-DECO-SECT: 7
+  A-通-墙...........COMM-WALL: 6
+  P-TUBE: 6
+  空调设备标注: 6
+  户型刷图层$0$A-STRS: 4
+  户型刷图层$0$A-EQPM: 4
+  S-柱墙-模板线.....COLUWL-LINE1: 4
+  A-通-设备.........COMM-EQPM: 3
+  G15G19-PLAN-P$0$$0$A-HOLE-MECH: 3
+  水管: 2
+  -P-VPIPE-污水: 1
+  -P-VPIPE-其它: 1
+  -P-VPIPE-废水: 1
+  G15G19-PLAN-P$0$$1$A-ANNO-LEGN-HOLE: 1
+
+--- (color,layer) combos top 60 ---
+  color=#808080 layer=P-FURNITURE : 10686
+  color=#808080 layer=P-DOOR : 761
+  color=#808080 layer=P-TOILET : 556
+  color=#FF00FF layer=P-WALL : 268
+  color=None layer=P-TEXT : 235
+  color=#0000FF layer=P-WALL : 200
+  color=#DDA46D layer=A-通-门窗剖线.....COMM-GLAZ-SECT : 177
+  color=#00B8B8 layer=P-TOILET : 117
+  color=#FF7E00 layer=P-DOOR : 113
+  color=#808080 layer=H-Y   人物标注 : 94
+  color=#00FFFF layer=E-dim : 84
+  color=None layer=P-DIM : 83
+  color=#6DDDDD layer=A-平-楼梯.........FLOR-STAIR : 72
+  color=None layer=A-平-看线.........FLOR-LEVEL : 66
+  color=#FF0000 layer=P-EQU-强弱电箱 : 63
+  color=#00FF00 layer=P-DIM : 60
+  color=#BEFF7E layer=zg-bzc-139zhongjiantao$1$A-PIPE : 60
+  color=#808080 layer=S-柱墙-填充.......COLUWL-HATCH : 55
+  color=#00FFFF layer=P-WALL FIN : 46
+  color=#808080 layer=E-dim : 42
+  color=#00FF00 layer=0 : 40
+  color=#FF9F7E layer=户型刷图层$0$A-WALL-FNSH : 37
+  color=#5CB800 layer=A-平-栏杆扶手.....FLOR-RAIL : 26
+  color=#0089B8 layer=A-平-看线.........FLOR-LEVEL : 25
+  color=#00B8B8 layer=I-FURNITURE-FIX : 14
+  color=#FF0000 layer=zg-bzc-139zhongjiantao$1$A-PIPE : 12
+  color=#5C89B8 layer=A-平-家具.........FLOR-FURN : 12
+  color=#00FFFF layer=PUB_TITLE : 12
+  color=#0000FF layer=户型刷图层$0$A-EQPM-HYDR : 9
+  color=#00FFFF layer=户型刷图层$0$A-ELVT : 8
+  color=#00FF00 layer=DIM_SYMB : 8
+  color=#89B800 layer=A_住宅墙身大样$0$A-平-装饰剖线.....FLOR-DECO-SECT : 7
+  color=#BE7EFF layer=H-Y   可移动家具 : 7
+  color=#FFFF00 layer=A-通-墙...........COMM-WALL : 6
+  color=#DCDCDC layer=P-TUBE : 6
+  color=#F9F9F9 layer=空调设备标注 : 6
+  color=#808080 layer=H-Y   可移动家具 : 6
+  color=#00FFFF layer=户型刷图层$0$A-STRS : 4
+  color=None layer=zg-bzc-139zhongjiantao$1$A-PIPE : 4
+  color=#FF3E00 layer=S-柱墙-模板线.....COLUWL-LINE1 : 4
+  color=#00B8B8 layer=P-EQU-强弱电箱 : 4
+  color=None layer=户型刷图层$0$A-EQPM : 3
+  color=None layer=P-EQU-强弱电箱 : 3
+  color=#00B8B8 layer=P-FURNITURE : 3
+  color=#B85C00 layer=A-通-设备.........COMM-EQPM : 3
+  color=#DD00A4 layer=G15G19-PLAN-P$0$$0$A-HOLE-MECH : 3
+  color=#00B8B8 layer=P-WALL FIN : 2
+  color=#00FF00 layer=水管 : 2
+  color=#000000 layer=0 : 1
+  color=#006DDD layer=户型刷图层$0$A-EQPM : 1
+  color=#535353 layer=P-WALL : 1
+  color=#FF7E00 layer=-P-VPIPE-污水 : 1
+  color=#000000 layer=-P-VPIPE-其它 : 1
+  color=#00FFFF layer=-P-VPIPE-废水 : 1
+  color=#B8735C layer=G15G19-PLAN-P$0$$1$A-ANNO-LEGN-HOLE : 1
+
+--- line widths top 30 ---
+  w=0.72: 13291
+  w=0.0: 436
+
+--- sample drawings (first 40) ---
+  {'type': 's', 'color': '#000000', 'fill': None, 'width': 0.7199999690055847, 'layer': '0', 'rect': [2.0, 2.8, 1015.0, 840.0], 'n_items': 1}
+  {'type': 'f', 'color': None, 'fill': '#B85C5C', 'width': None, 'layer': 'P-TEXT', 'rect': [411.2, 114.1, 416.4, 120.5], 'n_items': 326}
+  {'type': 'f', 'color': None, 'fill': '#B85C5C', 'width': None, 'layer': 'P-TEXT', 'rect': [416.8, 113.9, 422.1, 120.5], 'n_items': 274}
+  {'type': 'f', 'color': None, 'fill': '#B85C5C', 'width': None, 'layer': 'P-TEXT', 'rect': [422.6, 114.1, 427.8, 120.4], 'n_items': 129}
+  {'type': 'f', 'color': None, 'fill': '#B85C5C', 'width': None, 'layer': 'P-TEXT', 'rect': [428.7, 113.9, 433.2, 120.5], 'n_items': 184}
+  {'type': 'f', 'color': None, 'fill': '#B85C5C', 'width': None, 'layer': 'P-TEXT', 'rect': [758.5, 225.5, 765.0, 233.5], 'n_items': 379}
+  {'type': 'f', 'color': None, 'fill': '#B85C5C', 'width': None, 'layer': 'P-TEXT', 'rect': [765.7, 225.4, 772.2, 233.5], 'n_items': 309}
+  {'type': 'f', 'color': None, 'fill': '#B85C5C', 'width': None, 'layer': 'P-TEXT', 'rect': [772.8, 225.6, 779.4, 233.4], 'n_items': 148}
+  {'type': 'f', 'color': None, 'fill': '#B85C5C', 'width': None, 'layer': 'P-TEXT', 'rect': [780.6, 225.4, 786.1, 233.5], 'n_items': 225}
+  {'type': 'f', 'color': None, 'fill': '#B85C5C', 'width': None, 'layer': 'P-TEXT', 'rect': [728.6, 736.2, 734.2, 744.1], 'n_items': 263}
+  {'type': 'f', 'color': None, 'fill': '#B85C5C', 'width': None, 'layer': 'P-TEXT', 'rect': [735.9, 735.8, 741.4, 744.0], 'n_items': 213}
+  {'type': 'f', 'color': None, 'fill': '#B85C5C', 'width': None, 'layer': 'P-TEXT', 'rect': [761.8, 341.3, 767.4, 349.2], 'n_items': 266}
+  {'type': 'f', 'color': None, 'fill': '#B85C5C', 'width': None, 'layer': 'P-TEXT', 'rect': [769.0, 340.9, 774.6, 349.1], 'n_items': 215}
+  {'type': 'f', 'color': None, 'fill': '#B85C5C', 'width': None, 'layer': 'P-TEXT', 'rect': [423.7, 403.4, 429.7, 411.5], 'n_items': 345}
+  {'type': 'f', 'color': None, 'fill': '#B85C5C', 'width': None, 'layer': 'P-TEXT', 'rect': [430.6, 403.4, 437.1, 411.7], 'n_items': 312}
+  {'type': 'f', 'color': None, 'fill': '#B85C5C', 'width': None, 'layer': 'P-TEXT', 'rect': [374.6, 265.7, 381.1, 273.8], 'n_items': 327}
+  {'type': 'f', 'color': None, 'fill': '#B85C5C', 'width': None, 'layer': 'P-TEXT', 'rect': [338.7, 266.3, 345.3, 273.8], 'n_items': 440}
+  {'type': 'f', 'color': None, 'fill': '#B85C5C', 'width': None, 'layer': 'P-TEXT', 'rect': [345.0, 440.4, 351.6, 448.7], 'n_items': 231}
+  {'type': 'f', 'color': None, 'fill': '#B85C5C', 'width': None, 'layer': 'P-TEXT', 'rect': [352.2, 440.5, 358.8, 448.3], 'n_items': 335}
+  {'type': 'f', 'color': None, 'fill': '#B85C5C', 'width': None, 'layer': 'P-TEXT', 'rect': [360.2, 440.4, 365.8, 448.4], 'n_items': 172}
+  {'type': 'f', 'color': None, 'fill': '#B85C5C', 'width': None, 'layer': 'P-TEXT', 'rect': [366.6, 440.4, 373.0, 448.7], 'n_items': 442}
+  {'type': 's', 'color': '#0089B8', 'fill': None, 'width': 0.7199999690055847, 'layer': 'A-平-看线.........FLOR-LEVEL', 'rect': [153.6, 72.8, 459.2, 72.8], 'n_items': 1}
+  {'type': 's', 'color': '#0089B8', 'fill': None, 'width': 0.7199999690055847, 'layer': 'A-平-看线.........FLOR-LEVEL', 'rect': [247.8, 81.2, 247.8, 125.2], 'n_items': 1}
+  {'type': 's', 'color': '#0089B8', 'fill': None, 'width': 0.7199999690055847, 'layer': 'A-平-看线.........FLOR-LEVEL', 'rect': [256.0, 81.2, 256.0, 125.2], 'n_items': 1}
+  {'type': 'f', 'color': None, 'fill': '#B85C5C', 'width': None, 'layer': 'P-TEXT', 'rect': [178.0, 95.0, 184.5, 103.1], 'n_items': 389}
+  {'type': 'f', 'color': None, 'fill': '#B85C5C', 'width': None, 'layer': 'P-TEXT', 'rect': [185.2, 94.9, 191.7, 103.1], 'n_items': 307}
+  {'type': 'f', 'color': None, 'fill': '#B85C5C', 'width': None, 'layer': 'P-TEXT', 'rect': [192.3, 95.2, 198.9, 103.0], 'n_items': 144}
+  {'type': 'f', 'color': None, 'fill': '#B85C5C', 'width': None, 'layer': 'P-TEXT', 'rect': [200.0, 94.9, 205.6, 103.1], 'n_items': 218}
+  {'type': 'f', 'color': None, 'fill': '#B85C5C', 'width': None, 'layer': 'P-TEXT', 'rect': [246.3, 440.4, 252.9, 448.7], 'n_items': 231}
+  {'type': 'f', 'color': None, 'fill': '#B85C5C', 'width': None, 'layer': 'P-TEXT', 'rect': [253.5, 440.5, 260.1, 448.3], 'n_items': 337}
+  {'type': 'f', 'color': None, 'fill': '#B85C5C', 'width': None, 'layer': 'P-TEXT', 'rect': [261.6, 440.4, 267.2, 448.4], 'n_items': 173}
+  {'type': 'f', 'color': None, 'fill': '#B85C5C', 'width': None, 'layer': 'P-TEXT', 'rect': [267.9, 440.4, 274.4, 448.7], 'n_items': 447}
+  {'type': 'f', 'color': None, 'fill': '#B85C5C', 'width': None, 'layer': 'P-TEXT', 'rect': [235.9, 453.0, 242.4, 461.0], 'n_items': 228}
+  {'type': 'f', 'color': None, 'fill': '#B85C5C', 'width': None, 'layer': 'P-TEXT', 'rect': [243.3, 452.8, 249.6, 461.0], 'n_items': 346}
+  {'type': 'f', 'color': None, 'fill': '#B85C5C', 'width': None, 'layer': 'P-TEXT', 'rect': [250.2, 453.0, 256.8, 461.0], 'n_items': 310}
+  {'type': 'f', 'color': None, 'fill': '#B85C5C', 'width': None, 'layer': 'P-TEXT', 'rect': [258.2, 452.8, 263.8, 460.8], 'n_items': 175}
+  {'type': 'f', 'color': None, 'fill': '#B85C5C', 'width': None, 'layer': 'P-TEXT', 'rect': [264.6, 452.8, 271.0, 461.0], 'n_items': 452}
+  {'type': 'f', 'color': None, 'fill': '#B85C5C', 'width': None, 'layer': 'P-TEXT', 'rect': [243.2, 428.4, 249.2, 436.6], 'n_items': 387}
+  {'type': 'f', 'color': None, 'fill': '#B85C5C', 'width': None, 'layer': 'P-TEXT', 'rect': [250.6, 428.4, 256.8, 436.6], 'n_items': 434}
+  {'type': 'f', 'color': None, 'fill': '#B85C5C', 'width': None, 'layer': 'P-TEXT', 'rect': [258.2, 428.4, 263.8, 436.3], 'n_items': 177}

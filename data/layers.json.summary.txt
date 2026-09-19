@@ -1,0 +1,21 @@
+LAYER PRIMITIVE COUNTS
+  P-WALL: 1927
+  P-TOILET: 1182
+  P-DOOR: 995
+  S-柱墙-填充.......COLUWL-HATCH: 303
+  A-通-门窗剖线.....COMM-GLAZ-SECT: 267
+  P-WALL FIN: 195
+  P-EQU-强弱电箱: 195
+  H-Y   人物标注: 186
+  A-平-楼梯.........FLOR-STAIR: 82
+  户型刷图层$0$A-WALL-FNSH: 58
+  A-平-栏杆扶手.....FLOR-RAIL: 26
+  P-TUBE: 22
+  I-FURNITURE-FIX: 22
+  S-柱墙-模板线.....COLUWL-LINE1: 21
+  A-平-家具.........FLOR-FURN: 18
+  H-Y   可移动家具: 16
+  A-通-墙...........COMM-WALL: 9
+
+TEXT count: 0
+SAMPLE TEXT:
