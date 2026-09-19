@@ -24,7 +24,6 @@ from concurrent.futures import ThreadPoolExecutor
 GH = r"C:\Users\super\AppData\Local\gh_install\bin\gh.exe"
 API = "https://api.github.com"
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SHEBANG_MODE = 0o100755
 
 # 需要 LF 归一化的文本类型（二进制如 .png/.pdf/.dwg 不动）
 TEXT_EXT = {".py", ".js", ".jsx", ".mjs", ".cjs", ".ts", ".tsx", ".sh", ".json",
@@ -70,8 +69,20 @@ def req(method, path, body=None, retries=3):
 
 
 def tracked_files():
-    out = subprocess.run(["git", "ls-files"], cwd=ROOT, capture_output=True, text=True)
-    return [l.strip() for l in out.stdout.splitlines() if l.strip()]
+    """返回 [(path, mode)] —— mode 一律取 **git 索引**里的真实值（100644/100755）。
+
+    ⚠️ 别按扩展名猜可执行位：`.mjs` 未必有 shebang、`.sh` 也未必该 +x。
+       以索引为准，本地与远端才永远一致（第 12 轮按扩展名硬判，把没有 shebang 的
+       shot.mjs 也标成 755，于是每次推送都造出 4 个 mode 差异）。
+    """
+    out = subprocess.run(["git", "ls-files", "-s"], cwd=ROOT, capture_output=True, text=True)
+    res = []
+    for line in out.stdout.splitlines():
+        if not line.strip():
+            continue
+        meta, path = line.split("\t", 1)
+        res.append((path, meta.split()[0]))
+    return res
 
 
 def upload_blob(rel):
@@ -86,9 +97,12 @@ def upload_blob(rel):
 
 
 def build_tree(files, prefix=""):
-    """自底向上建 tree（GitHub 的 tree 条目 path 只允许单层，故逐级来）。"""
+    """自底向上建 tree（GitHub 的 tree 条目 path 只允许单层，故逐级来）。
+
+    files: {path: (blob_sha, mode)} —— mode 来自 git 索引，原样搬运。
+    """
     entries, subdirs = [], set()
-    for p, sha in files.items():
+    for p, (sha, mode) in files.items():
         if not p.startswith(prefix):
             continue
         rest = p[len(prefix):]
@@ -96,7 +110,6 @@ def build_tree(files, prefix=""):
             subdirs.add(rest.split("/")[0])
         else:
             # ⚠️ mode 必须是**字符串**（GitHub API 不接受整数 0o100644）
-            mode = "100755" if rest.endswith((".sh", ".mjs")) else "100644"
             entries.append({"path": rest, "mode": mode, "type": "blob", "sha": sha})
     for sd in sorted(subdirs):
         sub_entries, sub_sha = build_tree(files, prefix + sd + "/")
@@ -120,19 +133,21 @@ def main():
                else subprocess.run(["git", "log", "-1", "--pretty=%B"], cwd=ROOT,
                                    capture_output=True, text=True).stdout.strip())
 
-    files = tracked_files()
-    total = sum(os.path.getsize(os.path.join(ROOT, f)) for f in files
+    listed = tracked_files()                 # [(path, mode)]
+    paths = [p for p, _ in listed]
+    total = sum(os.path.getsize(os.path.join(ROOT, f)) for f in paths
                 if os.path.isfile(os.path.join(ROOT, f)))
-    print(f"[1/4] 上传 blobs：{len(files)} 个文件 / {total/1048576:.2f} MB")
+    print(f"[1/4] 上传 blobs：{len(paths)} 个文件 / {total/1048576:.2f} MB")
     shas = {}
     with ThreadPoolExecutor(max_workers=8) as ex:
-        for i, (rel, sha) in enumerate(ex.map(upload_blob, files), 1):
+        for i, (rel, sha) in enumerate(ex.map(upload_blob, paths), 1):
             shas[rel] = sha
-            if i % 25 == 0 or i == len(files):
-                print(f"      {i}/{len(files)}")
+            if i % 25 == 0 or i == len(paths):
+                print(f"      {i}/{len(paths)}")
 
     print("[2/4] 建 tree")
-    _, root_sha = build_tree(shas)
+    modes = dict(listed)                     # 可执行位沿用 git 索引，API 不再自造差异
+    _, root_sha = build_tree({p: (s, modes[p]) for p, s in shas.items()})
 
     print("[3/4] 建 commit")
     who = {"name": "supernisy", "email": "supernisy@users.noreply.github.com"}
