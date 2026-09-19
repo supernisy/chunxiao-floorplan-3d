@@ -10,6 +10,13 @@ Git Data API（api.github.com）把当前 HEAD 的完整文件树推上去。
     blobs(并发上传) → trees(逐级) → commit → 更新 ref
 
 用法:  python tools/push_via_api.py <owner/repo> [branch] [--message-file FILE]
+
+⚠️ 行尾归一化（第 12 轮踩过的坑）
+────────────────────────────────────────────────────────────
+本机 `core.autocrlf=true`：git **仓库里存的是 LF**，而工作区可能是 CRLF。
+如果直接上传工作区原文，每个 CRLF 文本文件在远端都会被判成"已修改" ——
+一次推送就污染二三十个文件（`data/*.json`、`pipeline/*.py` 全部"被改"），
+`git log` 也脏掉。所以文本类文件上传前必须做 `\r\n -> \n`。
 """
 import os, sys, json, base64, subprocess, urllib.request, urllib.error
 from concurrent.futures import ThreadPoolExecutor
@@ -18,6 +25,11 @@ GH = r"C:\Users\super\AppData\Local\gh_install\bin\gh.exe"
 API = "https://api.github.com"
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SHEBANG_MODE = 0o100755
+
+# 需要 LF 归一化的文本类型（二进制如 .png/.pdf/.dwg 不动）
+TEXT_EXT = {".py", ".js", ".jsx", ".mjs", ".cjs", ".ts", ".tsx", ".sh", ".json",
+            ".md", ".txt", ".svg", ".html", ".css", ".yml", ".yaml", ".toml", ".csv"}
+TEXT_NAME = {".gitignore", ".gitattributes", ".editorconfig"}
 
 _opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))  # 绕开不可用代理
 
@@ -64,7 +76,10 @@ def tracked_files():
 
 def upload_blob(rel):
     with open(os.path.join(ROOT, rel), "rb") as f:
-        content = base64.b64encode(f.read()).decode()
+        raw = f.read()
+    if os.path.splitext(rel)[1].lower() in TEXT_EXT or os.path.basename(rel) in TEXT_NAME:
+        raw = raw.replace(b"\r\n", b"\n")          # 对齐 git 仓库里的 LF 存储
+    content = base64.b64encode(raw).decode()
     sha = req("POST", f"/repos/{OWNER}/{REPO}/git/blobs",
               {"content": content, "encoding": "base64"})["sha"]
     return rel, sha
