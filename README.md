@@ -28,7 +28,10 @@ CAD 出的 PDF 保留了完整的 OCG 图层语义（`P-WALL` / `P-DOOR` / `COMM
 | 套内面积 | 125.18 m² |
 | 非轴向边 | **0**（不是"轴率 93%"） |
 
-![3D 轴测](data/v6/shot_v6_iso.png)
+移门洞口**撑到墙端**（推拉门在图上是**半开**画的，门扇并集 ≠ 洞口）：
+厨房 1.0 → **1.59 m**、客厅阳台 → 4.43 m、小孩房阳台 → 1.91 m。
+
+![3D 轴测](data/v6/shot_envDefault.png)
 
 ## 快速开始
 
@@ -39,11 +42,34 @@ $PY pipeline/geom_v6.py            # 1. 重建 room-graph / walls_poly / roof_po
 $PY pipeline/triangulate_walls.py  # 2. 墙体 CDT 预三角化
 $PY pipeline/make_plan6.py full    # 3. 出「理解平面图」（full|master|gw）
 
-cd app && npm install && npx vite  # 4. 打开 3D，俯视 ↔ 第一人称漫游
+cd app && npm install && npx vite  # 4. 打开 3D
 ```
 
-3D 视角参数：`?zoom=` `?cx=&cy=` `?tilt=`（0 正俯视 / >0 轴测）、
-`?mode=walk`（第一人称）、`?debug=wall|door|floor`（单层诊断）。
+## 三个视角
+
+默认是**第三人称环视**（透视轨道相机，拖动旋转 / 滚轮缩放 / 右键平移）：
+
+| 视角 | 参数 | 用途 |
+|------|------|------|
+| 第三人称环视（默认） | `?mode=orbit` · `?az=` 方位角 · `?el=` 仰角 · `?dist=` 取景 | 看体量、看高度、看外部环境 |
+| 正交俯视 | `?mode=top` · `?zoom=` · `?cx=&cy=` · `?tilt=`（>0 轴测） | 读图纸、量尺寸、截图判读 |
+| 第一人称漫游 | `?mode=walk` | 进屋走（WASD + 指针锁定） |
+
+兼容旧链接：只带 `?tilt=`/`?zoom=`/`?cx=`/`?cy=` 时自动按正交俯视处理。
+
+## 外部环境（17/26 层）
+
+套型按 **17/26 层**渲染，脚下 48 m 才是地坪：
+
+![17/26 层语境](data/v6/shot_skyTest.png)
+
+- **天空穹顶**：顶点色渐变（零依赖，不引 shader），地平线有雾带
+- **地坪 + 街道网格**：每格 5 m，给"多高"一个可量测的参照
+- **两圈城市剪影**：近景矮楼 + 远景高楼，确定性伪随机（mulberry32，截图可复现）
+- **半透明楼身**：地坪→本层 的楼身 + 本层→塔顶 的 9 层体量，一眼看出"在这么高"
+- 俯视（图纸模式）下**自动关闭**，不干扰正交判读
+
+> ⚠️ 环境是**程序化示意**，只表达"在 17 楼"，不代表真实周边城市（未接 GIS 数据）。
 
 ## 立即看 3D（不用装环境）
 
@@ -95,11 +121,13 @@ chunxiao.pdf
 Vite + React + react-three-fiber。
 
 - 墙体：CDT 三角网顶面 + 轮廓侧壁
-- 门：`swing`（门扇 + 把手 + 门楣，开向读 `door.side`）/ `glazing`（多扇错开玻璃推拉门）/
-  `lift` / `opening`
+- 门：`swing`（门扇 + 把手 + 门楣，开向读 `door.side`）/ `glazing`（多扇错开玻璃推拉门，
+  **铺满整个洞口**）/ `lift` / `opening`
 - 窗：窗台墙 + 玻璃 + 窗楣三段
 - 飘窗：`room.bays` → 0.5m 抬高台面
-- 交互：俯视 ↔ 第一人称漫游（WASD + PointerLock）、导出 JSON
+- 视角：第三人称轨道（默认）/ 正交俯视 / 第一人称漫游；`?debug=wall|door|floor` 单层诊断
+- 环境：天空穹顶 + 地坪网格 + 城市剪影 + 半透明楼身（按 17/26 层定位）
+- 主光 `SunLight` 的 target 跟到套型中心，阴影正交框才框得住（原先默认在世界原点，影子被裁）
 
 ## 目录
 
@@ -108,7 +136,8 @@ assets/chunxiao.pdf     矢量 PDF（管线主源）
 pipeline/               全部 Python 管线与诊断工具
 app/                    Vite + React + r3f 前端
 demo/                   单文件离线演示页（构建产物）
-tools/capture.sh        一条命令自管理截图（vite + headless Edge CDP）
+tools/capture.sh        截图（起 vite + headless Edge CDP，单张）
+tools/shots.sh          多视角连拍（一次启动，拍 N 张）
 tools/build_standalone.py  把 app/dist 打成单文件 HTML
 tools/verify_standalone.sh file:// 渲染自检
 data/v6/                中间图与理解图

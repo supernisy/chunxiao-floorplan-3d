@@ -13,6 +13,15 @@ const WALL_T = 0.13         // 门楣厚度
 const EYE = 1.62            // 视高
 const SPEED = 3.6           // m/s
 
+/* ---------- 楼层语境 ----------
+   套型位于 17/26 层：地面在脚下 (17-1) 层处，头顶还有 (26-17) 层。
+   渲染外部环境时以这两个常量定位地面与塔楼顶，让"在 17 楼"一眼可读。 */
+const H_FLOOR = 3.0                          // 标准层层高（结构层高，比净高 2.9 略大）
+const FLOOR_NO = 17                          // 本套所在层
+const FLOOR_TOTAL = 26                       // 总层数
+const GROUND_Y = -(FLOOR_NO - 1) * H_FLOOR   // 室外地坪 = -48 m
+const TOWER_TOP_Y = (FLOOR_TOTAL - FLOOR_NO) * H_FLOOR + H_WALL  // 塔楼顶 ≈ +29.9 m
+
 /* ---------- 工具 ---------- */
 // 平面图 (x,y) -> three xz 平面：shape 用 (x, -y)，再 rotation.x = -90°
 function shapeFrom(poly) {
@@ -270,6 +279,152 @@ function Roof({ visible }) {
   )
 }
 
+/* ══════════════════════════════════════════════════════════════
+   外部环境（17/26 层的高空语境）
+   ──────────────────────────────────────────────────────────────
+   屋子在 17 层，脚下 48m 才是地坪，四周是城市。原先把场景悬在虚空里，
+   转到侧面看会"没有参照物"，高度感完全丢失。这里补三样东西：
+
+     SkyDome    天空穹顶（顶点色渐变，零依赖，不用 shader）
+     Ground     地坪 + 街道网格（尺度参照：每格 5m）
+     Skyline    远景城市剪影（确定性伪随机，每次刷新完全一致）
+     TowerShell 本楼体量：地面→本层 的楼身，以及本层→塔顶 的 9 层体量
+
+   TowerShell 是"17/26"最直接的表达：半透明的楼身把套型托起来，
+   一眼能看出"我们在这么高的位置"。俯视（图纸模式）时全部关闭，
+   避免干扰正交判读。
+   ══════════════════════════════════════════════════════════════ */
+
+/* 顶点色天空穹顶。相比 drei 的 <Sky> 少一层依赖，且能做"地平线雾带"的效果。 */
+function SkyDome({ cx, cy, radius = 1400 }) {
+  const geo = useMemo(() => {
+    const g = new THREE.SphereGeometry(radius, 32, 18)
+    const pos = g.attributes.position
+    const col = new Float32Array(pos.count * 3)
+    const top = new THREE.Color('#2f6fc0')     // 天顶
+    const mid = new THREE.Color('#a3c6e4')     // 中空
+    const bot = new THREE.Color('#eef2f6')     // 地平线雾带
+    for (let i = 0; i < pos.count; i++) {
+      const t = THREE.MathUtils.clamp(pos.getY(i) / radius, -1, 1)
+      const c = t >= 0
+        ? mid.clone().lerp(top, Math.pow(t, 0.42))     // 指数小 -> 抬一点头就见到蓝
+        : mid.clone().lerp(bot, Math.pow(-t, 0.45))
+      col[i * 3] = c.r; col[i * 3 + 1] = c.g; col[i * 3 + 2] = c.b
+    }
+    g.setAttribute('color', new THREE.BufferAttribute(col, 3))
+    return g
+  }, [radius])
+  return (
+    <mesh geometry={geo} position={[cx, 0, cy]}>
+      <meshBasicMaterial vertexColors side={THREE.BackSide} fog={false} depthWrite={false} />
+    </mesh>
+  )
+}
+
+/* 地坪 + 街道网格：给"多高"一个可量测的参照（每格 5m）。 */
+function Ground({ cx, cy }) {
+  const S = 900
+  return (
+    <group position={[cx, GROUND_Y, cy]}>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+        <planeGeometry args={[S, S]} />
+        <meshStandardMaterial color="#8d9899" roughness={1} />
+      </mesh>
+      <gridHelper args={[S, S / 5, '#6f7a7c', '#7d888a']}
+        position={[0, 0.06, 0]} material-transparent material-opacity={0.5} />
+    </group>
+  )
+}
+
+/* 确定性伪随机（mulberry32）：保证每次打开看到的是同一片城市，截图可复现。 */
+function mulberry32(seed) {
+  return function () {
+    seed |= 0; seed = (seed + 0x6D2B79F5) | 0
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed)
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+}
+
+/* 远景城市剪影：环形撒点，避开正中的自家楼位。
+   高度刻意压在自己这层（+48m 地坪以上）附近或以下 —— 否则几十栋比你还高的
+   楼会把天空完全糊死；留出屋顶线与天空，高空感才出得来。 */
+const SKYLINE = (() => {
+  const rnd = mulberry32(20260919)
+  const out = []
+  // 近景一圈矮楼：把"楼下就是城市"填出来，避免大片空地显得像荒漠。
+  // 必须放得够远（≥110m）—— 太近的话从本层俯看会正好糊在户型附近，喧宾夺主。
+  for (let i = 0; i < 55; i++) {
+    const ang = rnd() * Math.PI * 2
+    const r = 110 + rnd() * 150
+    out.push({ x: Math.cos(ang) * r, z: Math.sin(ang) * r,
+               w: 15 + rnd() * 30, d: 15 + rnd() * 30,
+               h: 5 + rnd() * 19, k: rnd() })
+  }
+  // 远景一圈：有高有矮，控制在"我这层"上下一带
+  for (let i = 0; i < 110; i++) {
+    const ang = rnd() * Math.PI * 2
+    const r = 155 + rnd() * 420
+    out.push({ x: Math.cos(ang) * r, z: Math.sin(ang) * r,
+               w: 14 + rnd() * 30, d: 14 + rnd() * 30,
+               h: 6 + Math.pow(rnd(), 2.0) * 58, k: rnd() })
+  }
+  return out
+})()
+
+function Skyline({ cx, cy }) {
+  return (
+    <group position={[cx, GROUND_Y, cy]}>
+      {SKYLINE.map((b, i) => {
+        const c = new THREE.Color().setHSL(0.58, 0.06 + b.k * 0.05, 0.52 + b.k * 0.16)
+        return (
+          <mesh key={i} position={[b.x, b.h / 2, b.z]} castShadow={false}>
+            <boxGeometry args={[b.w, b.h, b.d]} />
+            <meshStandardMaterial color={c} roughness={0.95} metalness={0}
+              transparent opacity={0.92} />
+          </mesh>
+        )
+      })}
+    </group>
+  )
+}
+
+/* 本楼体量：楼身（地坪→本层）与上部楼层（本层→塔顶），半透明不挡内部。 */
+function TowerShell() {
+  const shape = useMemo(() => shapeFrom(roofData.polygon_m), [])
+  const below = useMemo(() => new THREE.ExtrudeGeometry(shape, {
+    depth: -GROUND_Y, bevelEnabled: false, curveSegments: 1,
+  }), [shape])
+  const above = useMemo(() => new THREE.ExtrudeGeometry(shape, {
+    depth: Math.max(0.1, TOWER_TOP_Y - H_WALL), bevelEnabled: false, curveSegments: 1,
+  }), [shape])
+  const mat = (op) => <meshStandardMaterial color="#cfc9c0" roughness={0.9}
+    transparent opacity={op} depthWrite={false} side={THREE.DoubleSide} />
+  return (
+    <group rotation={[-Math.PI / 2, 0, 0]}>
+      <mesh geometry={below} position={[0, 0, GROUND_Y]}>
+        {mat(0.16)}
+      </mesh>
+      <mesh geometry={above} position={[0, 0, H_WALL + 0.02]}>
+        {mat(0.11)}
+      </mesh>
+    </group>
+  )
+}
+
+/* 环境总装：仅第三人称 / 漫游时显示 */
+function Surroundings({ ext, on }) {
+  if (!on) return null
+  return (
+    <group>
+      <SkyDome cx={ext.cx} cy={ext.cy} />
+      <Ground cx={ext.cx} cy={ext.cy} />
+      <Skyline cx={ext.cx} cy={ext.cy} />
+      <TowerShell />
+    </group>
+  )
+}
+
 /* ---------- 俯视：正交相机（户型图式，无透视遮挡） ----------
    截图/演示用 URL 参数：
      ?zoom=3      放大倍数（默认 1 = 全屋）
@@ -295,6 +450,42 @@ function TopView({ ext }) {
         near={0.1} far={300} />
       <OrbitControls target={[cx, 0, cy]} enablePan enableZoom
         enableRotate={false} />
+    </>
+  )
+}
+
+/* ---------- 第三人称环视（默认视角） ----------
+   一个可以绕着屋子转的透视轨道相机：拖动旋转、滚轮缩放、右键平移。
+   相比正交俯视，它保留透视与高度，能真正"看"出这是间 3D 房子。
+
+   URL 参数（便于分享/自动截图）：
+     ?mode=orbit            进入本视角（也是默认）
+     ?az=25                 方位角（度）。0 = 从南侧看（+z），逆时针为正
+     ?el=20                 仰角（度）。90 = 正俯视；默认压得较低，好把
+                            天空与远景城市一起收进画面（高仰角会只剩地面）
+     ?dist=1.5              取景距离系数 */
+function OrbitView({ ext }) {
+  const q = useMemo(() => new URLSearchParams(window.location.search), [])
+  const num = (k, d) => (q.has(k) ? parseFloat(q.get(k)) : d)
+  const az = num('az', 25)
+  const el = Math.max(4, Math.min(84, num('el', 14)))
+  const distK = Math.abs(num('dist', 1.55)) || 1.55
+  const R = Math.max(ext.w, ext.h) * 1.25 * distK
+  const elr = (el * Math.PI) / 180
+  const azr = (az * Math.PI) / 180
+  const pos = [
+    ext.cx + R * Math.cos(elr) * Math.sin(azr),
+    R * Math.sin(elr),
+    ext.cy + R * Math.cos(elr) * Math.cos(azr),
+  ]
+  return (
+    <>
+      <PerspectiveCamera makeDefault position={pos} fov={45} near={0.1} far={6000} />
+      <OrbitControls makeDefault target={[ext.cx, 2.0, ext.cy]}
+        enablePan enableZoom enableRotate
+        enableDamping dampingFactor={0.08}
+        minDistance={2.5} maxDistance={Math.max(420, R * 4)}
+        maxPolarAngle={Math.PI / 2 - 0.015} />
     </>
   )
 }
@@ -326,11 +517,42 @@ function FPSMove() {
   return null
 }
 
+/* ---------- 主光 ----------
+   原先 directionalLight 的 target 默认在**世界原点**，而本套型中心在
+   (ext.cx, ext.cy) ≈ (12.2, 9.3) —— 阴影正交框（±14）因此偏掉了大半，
+   房间里的影子被裁。这里把 target 挪到套型中心，并按套型尺寸给足范围。 */
+function SunLight({ cx, cy, castShadow }) {
+  const ref = useRef()
+  useEffect(() => {
+    const l = ref.current
+    if (!l) return
+    l.target.position.set(cx, 0, cy)
+    l.target.updateMatrixWorld()          // getWorldPosition 会再刷一次，双保险
+  }, [cx, cy])
+  return (
+    <directionalLight ref={ref} position={[cx + 16, 34, cy + 13]} intensity={1.05}
+      castShadow={castShadow}
+      shadow-mapSize-width={2048} shadow-mapSize-height={2048}
+      shadow-camera-left={-15} shadow-camera-right={15}
+      shadow-camera-top={15} shadow-camera-bottom={-15}
+      shadow-camera-near={1} shadow-camera-far={160}
+      shadow-bias={-0.0006} />
+  )
+}
+
 /* ---------- 场景 ---------- */
 export default function App() {
-  // 支持 ?mode=walk 直接进入漫游（便于自动化截图/分享链接）
-  const [mode, setMode] = useState(() =>
-    new URLSearchParams(window.location.search).get('mode') === 'walk' ? 'walk' : 'top')
+  // 默认「第三人称环视」。?mode=orbit|top|walk 可显式指定。
+  // 兼容旧链接/旧截图脚本：只带 ?tilt= / ?zoom= / ?cx= / ?cy= 的一律按正交俯视处理。
+  const [mode, setMode] = useState(() => {
+    const q = new URLSearchParams(window.location.search)
+    const m = q.get('mode')
+    if (m === 'top' || m === 'walk' || m === 'orbit') return m
+    if (q.has('tilt') || q.has('zoom') || q.has('cx') || q.has('cy')) return 'top'
+    return 'orbit'
+  })
+  // 外部环境只在"有空域"的两个视角里出现；正交俯视是图纸模式，要干净。
+  const envOn = mode === 'orbit' || mode === 'walk'
   // 诊断开关：?debug=wall | door | floor —— 用于判定渲染瑕疵归属哪个 mesh
   const debug = useMemo(
     () => new URLSearchParams(window.location.search).get('debug'), [])
@@ -389,32 +611,40 @@ export default function App() {
         <div style={{ fontWeight: 700, marginBottom: 4 }}>春晓户型 · 3D 毛坯房</div>
         <div>房间 {rooms.length} · 门 {graph.doors.length}（平开 {swing} / 玻璃移门 {sliding}）</div>
         <div>窗 {nWin} · 墙段 {wallsPoly.length} · 套内 {graph.checks.area_total_m2} m²</div>
-        <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
-          <button onClick={() => setMode(mode === 'top' ? 'walk' : 'top')} style={{ padding: '5px 10px' }}>
-            {mode === 'top' ? '第一人称漫游' : '返回俯视'}
-          </button>
-          <button onClick={exportJson} style={{ padding: '5px 10px' }}>导出 JSON</button>
+        <div style={{ color: '#8fd6a8' }}>
+          楼层 {FLOOR_NO}/{FLOOR_TOTAL} · 室外地坪 −{Math.abs(GROUND_Y)} m
         </div>
-        {mode === 'walk' && <div style={{ marginTop: 6, fontSize: 12, color: '#bcd' }}>
-          点击画面锁定 · WASD 行走 · ESC 释放
-        </div>}
+        <div style={{ marginTop: 8, display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+          {[['orbit', '第三人称环视'], ['top', '正交俯视'], ['walk', '第一人称']].map(([m, label]) => (
+            <button key={m} onClick={() => setMode(m)} style={{
+              padding: '5px 9px', borderRadius: 5, cursor: 'pointer', font: 'inherit',
+              border: mode === m ? '1px solid #7fb2ff' : '1px solid rgba(255,255,255,0.18)',
+              background: mode === m ? 'rgba(127,178,255,0.30)' : 'rgba(255,255,255,0.08)',
+              color: '#fff',
+            }}>{label}</button>
+          ))}
+        </div>
+        <div style={{ marginTop: 8 }}>
+          <button onClick={exportJson} style={{ padding: '5px 9px' }}>导出 JSON</button>
+        </div>
+        <div style={{ marginTop: 6, fontSize: 12, color: '#bcd', maxWidth: 250 }}>
+          {mode === 'orbit' && '拖动旋转 · 滚轮缩放 · 右键平移（外部环境已渲染）'}
+          {mode === 'walk' && '点击画面锁定 · WASD 行走 · ESC 释放'}
+          {mode === 'top' && '正交图纸视角 · 滚轮缩放 · 右键平移'}
+        </div>
       </div>
 
       <Canvas shadows dpr={[1, 2]}>
-        <color attach="background" args={['#cfe3f2']} />
-        <hemisphereLight args={['#ffffff', '#c8c2b8', 0.62]} />
-        <directionalLight position={[18, 26, 12]} intensity={1.05}
-          castShadow={mode === 'walk'}
-          shadow-mapSize-width={2048} shadow-mapSize-height={2048}
-          shadow-camera-left={-14} shadow-camera-right={14}
-          shadow-camera-top={14} shadow-camera-bottom={-14}
-          shadow-camera-near={0.5} shadow-camera-far={90}
-          shadow-bias={-0.0006} />
-        <ambientLight intensity={0.5} />
+        {envOn
+          ? <fog attach="fog" args={['#e3eaf2', 70, 700]} />   // 与穹顶地平线色对齐，让地平线化进雾里
+          : <color attach="background" args={['#cfe3f2']} />}
+        <hemisphereLight args={['#ffffff', '#c8c2b8', envOn ? 0.78 : 0.62]} />
+        <SunLight cx={ext.cx} cy={ext.cy} castShadow={mode !== 'top'} />
+        <ambientLight intensity={envOn ? 0.40 : 0.5} />
 
-        {mode === 'top' ? (
-          <TopView ext={ext} />
-        ) : (
+        {mode === 'top' && <TopView ext={ext} />}
+        {mode === 'orbit' && <OrbitView ext={ext} />}
+        {mode === 'walk' && (
           <>
             <PerspectiveCamera makeDefault position={walkStart} fov={68} />
             <PointerLockControls />
@@ -431,6 +661,7 @@ export default function App() {
         ))}
         {showDoor && graph.doors.map((d) => <DoorUnit key={d.id} door={d} roomNameOf={roomNameOf} />)}
         {showDoor && (graph.windows || []).map((w) => <WindowUnit key={w.id} win={w} />)}
+        <Surroundings ext={ext} on={envOn} />
         <Roof visible={mode === 'walk'} />
       </Canvas>
     </div>

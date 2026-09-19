@@ -23,6 +23,7 @@
 | `tools/capture.sh` | 一条命令自管理生命周期截图（vite + headless Edge CDP） |
 | `tools/build_standalone.py` | 把 `app/dist` 打成**单文件 HTML**（`demo/chunxiao-3d-standalone.html`） |
 | `tools/verify_standalone.sh` | `file://` 下渲染自检（像素方差判定，非肉眼） |
+| `tools/shots.sh` | **一次**启动 vite+headless Edge，连拍多个视角（调相机 / 出交付图用，比逐张 capture.sh 快得多） |
 | `tools/push_via_api.py` | `github.com` 被封锁时经 `api.github.com` 用 Git Data API 推送 |
 
 ## 3. 一键跑通
@@ -43,6 +44,13 @@ cd .. && $PY tools/build_standalone.py   # 2. 重打单文件离线版
 bash tools/verify_standalone.sh          # 3. 断言真的渲染出来了（PASS/FAIL）
 ```
 
+调相机 / 出多张交付图时用 `tools/shots.sh`（只启一次 vite 与 Edge）：
+
+```bash
+bash tools/shots.sh "orbit=/" "top=?mode=top" "gw=?mode=top&zoom=3.2&cx=11.05&cy=3.0"
+# -> data/v6/shot_orbit.png, shot_top.png, shot_gw.png
+```
+
 截图用的相机参数（`TopView` 支持）：`?zoom=` / `?cx=&cy=` / `?tilt=`（0=正俯视，>0=轴测）。
 另有 `?mode=walk`（第一人称）、`?debug=wall|door|floor`（诊断单层）。
 
@@ -57,6 +65,12 @@ bash tools/verify_standalone.sh          # 3. 断言真的渲染出来了（PASS
 | `SHAFT_ROI` | 管井整块丢弃（非户内可用空间） |
 | `BAY_MERGE` | 飘窗并入其所属房间 |
 | `DOOR_SIDE_FIX` | 门开向兜底（一般不需要，门扇法已够准） |
+
+判读**约定**（不是裁定、而是图上惯例，写在 `wall_gap_extent()` 里）：
+
+| 约定 | 依据 | 后果（若不做） |
+|------|------|----------------|
+| **推拉门洞口 = 两侧墙端之间的距离**，不是「门扇并集的跨度」 | 本图 3 樘移门校准：客厅阳台 4.365m 洞 / 4 扇并集 4.36m；小孩房阳台 1.85m 洞 / 并集 1.847m —— 并集**应当**等于洞宽 | 厨房推拉门被画成半开（并集仅 0.995m，东扇平移 0.566m 正好顶到东墙端头），3D 里右侧漏出 **0.57m 豁口**，既没墙也没门 |
 
 ## 5. 约定（重要）
 
@@ -94,15 +108,38 @@ bash tools/verify_standalone.sh          # 3. 断言真的渲染出来了（PASS
 直接用 `python tools/push_via_api.py <owner/repo> [branch]`。
 排查顺序与四个坑见 `~/.workbuddy/skills/git-push-fix`（v1.3.0 第 6 步）。
 
+### 5.7 "洞口/缺口"类问题先问三件事
+用户肉眼看出"某处不该空"时，按这个顺序查，别急着下结论：
+
+1. **原始 PDF 里那块到底画了什么**——用 `probe_region2.py X0 Y0 X1 Y1 --all`（默认每层只打 12 条，
+   排查"有没有画墙"必须加 `--all`，否则关键图元会被截掉），必要时再用 `roi_pdf.py`
+   以 `PLAIN=1` 看全图层叠加原图；
+2. **是"图画得怪"还是"我们读得怪"**——查该图层的惯例（例：推拉门画半开、门扇画在开启位置）；
+3. **拿同图其它同类构件校准**——本图 3 樘移门互相对照才定下"并集应等于洞宽"。
+
+→ 结论写进 §4 的表，**不要**只改代码留个魔法判断。
+
+### 5.8 改 3D 视角/环境的默认值前先连拍
+`tools/shots.sh` 一次启 vite+Edge 连拍多组参数，比逐张 `capture.sh` 快一个数量级。
+取景参数（`?az= ?el= ?dist=`）改动后至少拍「默认 / 偏高 / 偏低」三张再定稿——
+只凭一张图很容易定出"看不到天空"或"屋子太小"的默认值（本轮已踩）。
+
 ## 6. 当前状态
 
 - 10 房间 / 11 门（平开 8 + 玻璃移门 3）/ 6 窗 / 套内 **125.18 m²**
+- 移门洞口已撑到墙端：厨房 1.59m、客厅阳台 4.43m、小孩房阳台 1.91m（原先厨房只有 1.0m，
+  右侧漏 0.57m 豁口）
 - 房间非轴向边 = 0；公卫为完整 L 形（东北角管井凹角）
 - 飘窗已并入主卧套间 / 瑶瑶衣帽间，渲染成 0.5m 抬高台面
 - 门开向由 `P-DOOR` **橙色门扇质心**判读（比开启弧法稳）
+- 默认视角 = **第三人称环视**（透视轨道相机，可旋转/缩放/平移）；
+  另有 `?mode=top` 正交图纸视角、`?mode=walk` 第一人称漫游
+- 套型按 **17/26 层**渲染外部环境：天空穹顶 + 地坪街道网格 + 两圈城市剪影 +
+  半透明楼身（地坪 −48m → 本层 → 塔顶），俯视模式下自动关闭
 
 ### 已知遗留
 1. 公卫的淋浴玻璃隔断（`COMM-GLAZ-SECT` 剖线）尚未在 3D 里单独渲染。
 2. 公卫「盥洗龛」（洗手台，x11.33-11.90 / y3.67-4.52）**向客厅开敞**无结构墙，
    故几何上归属 LDK；3D 里尚未摆洗手台实体。
-3. `pipeline/rooms_v4.py` 的历史分割 bug 未查（已被 v6 管线取代，可忽略）。
+3. 外部环境是**程序化示意**（非真实城市 GIS 数据）——只表达"在 17 楼"，不代表实际周边。
+4. `pipeline/rooms_v4.py` 的历史分割 bug 未查（已被 v6 管线取代，可忽略）。

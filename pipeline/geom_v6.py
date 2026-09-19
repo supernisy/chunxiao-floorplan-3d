@@ -267,6 +267,72 @@ def _band(arr, lo, hi):
     return arr[lo:hi]
 
 
+def wall_gap_extent(wall, ori, line, a0, a1, grow_max=1.6):
+    """把推拉门洞口沿其轴向**撑到两侧墙端**，返回撑好后的 (a0, a1)。
+
+    为什么必须撑
+    ─────────────────────────────────────────────────────────────
+    推拉门在图上经常画成**半开状态**（两扇沿轨道错开、并集小于洞宽），
+    于是"门扇并集的跨度"≠"真实洞口"。若直接拿并集当洞口：
+      · 3D 里门扇只盖住一半，剩下的洞**既没墙也没门** → 露出豁口；
+      · 厨房推拉门右侧就漏了 0.57 m（用户一眼看出"按常理不可能空"）。
+    校准依据（本图三樘移门）：客厅阳台 4.365m 洞 / 4 扇并集 4.36m；
+    小孩房阳台 1.85m 洞 / 4 扇并集 1.847m —— 并集**应当**等于洞宽。
+    唯独厨房那樘只给了 0.995m，且其东扇向东平移 0.566m 恰好顶到东墙端头，
+    说明图纸画的是"半开位"。
+
+    做法：取墙带做 1D 占据度，从洞口中心向两侧走到碰墙为止；
+    只在扩展量 ≤ grow_max 时采纳（避免一步撑到隔壁房间去）。
+    """
+    if ori == "h":
+        band = wall[max(0, int((line - 0.07) * PP)):int((line + 0.07) * PP) + 1]
+        if band.size == 0:
+            return a0, a1
+        occ = (band > 0).any(axis=0)
+    else:
+        band = wall[:, max(0, int((line - 0.07) * PP)):int((line + 0.07) * PP) + 1]
+        if band.size == 0:
+            return a0, a1
+        occ = (band > 0).any(axis=1)
+
+    # 1D 闭运算吃掉抗锯齿造成的假空档
+    k = int(round(0.06 * PP)) | 1
+    occ = cv2.morphologyEx(occ.astype(np.uint8).reshape(1, -1),
+                           cv2.MORPH_CLOSE, np.ones((1, k), np.uint8))[0] > 0
+
+    n = int(occ.shape[0])
+    c = int(round((a0 + a1) / 2 * PP))
+    if not (0 <= c < n) or occ[c]:
+        return a0, a1                          # 中心点落在墙上 -> 不可信，放弃
+    lo = hi = c
+    while lo - 1 >= 0 and not occ[lo - 1]:
+        lo -= 1
+    while hi + 1 < n and not occ[hi + 1]:
+        hi += 1
+    na0, na1 = lo / PP, (hi + 1) / PP
+    if na1 <= na0 or (na1 - na0) - (a1 - a0) > grow_max:
+        return a0, a1
+    # 只接受"变大"：新跨度必须**包含**原跨度。若反而变小，说明墙带里
+    # 混进了门洞内部的墙垛（例如两樘门被形态学闭运算并成了一个实例），
+    # 此时保持原值更安全。
+    if na0 > a0 + 1e-3 or na1 < a1 - 1e-3:
+        return a0, a1
+    return na0, na1
+
+
+SLIDING_SNAP_LOG = []          # 撑洞记录，供主流程打印审计
+
+
+def _snap_sliding(wall, ori, line, a0, a1):
+    """推拉门专用：洞口撑到墙端，并记一条审计日志。"""
+    na0, na1 = wall_gap_extent(wall, ori, line, a0, a1)
+    if abs(na0 - a0) > 1e-3 or abs(na1 - a1) > 1e-3:
+        SLIDING_SNAP_LOG.append(
+            f"{ori} 洞口 {a0:.3f}->{a1:.3f} (宽 {a1-a0:.3f}) "
+            f"撑到墙端 {na0:.3f}->{na1:.3f} (宽 {na1-na0:.3f})")
+    return na0, na1, 1.0
+
+
 def probe_opening(inst, wall):
     """反推洞口线段：返回 (ori, 墙线坐标, 跨起, 跨止, 置信度)。
 
@@ -277,8 +343,8 @@ def probe_opening(inst, wall):
 
     if inst["kind"] == "sliding":
         if inst["bw"] >= inst["bh"]:                 # 水平长条 -> 墙水平
-            return "h", (y0 + y1) / 2, x0, x1, 1.0
-        return "v", (x0 + x1) / 2, y0, y1, 1.0
+            return "h", (y0 + y1) / 2, *_snap_sliding(wall, "h", (y0 + y1) / 2, x0, x1)
+        return "v", (x0 + x1) / 2, *_snap_sliding(wall, "v", (x0 + x1) / 2, y0, y1)
 
     # swing：沿 y 找墙（水平墙）与沿 x 找墙（竖直墙）比分数
     # 注意扫描范围必须**限制在 bbox 内**（±0.05m），否则探针会吸附到旁边
@@ -526,6 +592,10 @@ def main():
     # 只有"门"用来封堵（分隔房间）。玻璃剖线是窗/飘窗栏杆的细线构件，
     # 一旦进 barrier 就会把飘窗、阳台沿中缝切成两半 -> 只作窗户元数据。
     ops = opening_instances(dinst, ginst, wall)
+    if SLIDING_SNAP_LOG:
+        print(f"  推拉门洞口撑到墙端 {len(SLIDING_SNAP_LOG)} 处：")
+        for line in SLIDING_SNAP_LOG:
+            print(f"    · {line}")
     ops = [o for o in ops if o["width_m"] >= 0.25]
     dop = [o for o in ops if o["src"] == "door"]
     n0 = len(dop)

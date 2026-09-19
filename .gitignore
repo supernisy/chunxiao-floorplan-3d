@@ -21,6 +21,16 @@ data/v6/unit_*.png
 data/v6/clean_*.png
 data/v6/skin*.png
 data/v6/seal*.png
+# 调相机参数过程中的中间截图：只保留定稿的那几张（shot_envDefault / shot_skyTest /
+# shot_topFull / shot_kitchenFix / shot_kitchenIso），其余用完即弃
+data/v6/shot_orbit.png
+data/v6/shot_orbitA.png
+data/v6/shot_orbitB.png
+data/v6/shot_envAlt.png
+data/v6/shot_envHigh.png
+data/v6/shot_envWide.png
+data/v6/kitchen_plain.png
+data/v6/kitchen_south_band.png
 
 # ── 原始素材：只保留矢量 PDF（管线主源），其余为大文件/未使用 ──
 assets/walkthrough.mp4
