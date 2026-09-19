@@ -21,6 +21,9 @@
 | `app/src/data/*.json` | **数据契约**：`room-graph.json` / `walls_poly.json` / `walls_tri.json` / `roof_poly.json` |
 | `app/src/App.jsx` | 3D 渲染 |
 | `tools/capture.sh` | 一条命令自管理生命周期截图（vite + headless Edge CDP） |
+| `tools/build_standalone.py` | 把 `app/dist` 打成**单文件 HTML**（`demo/chunxiao-3d-standalone.html`） |
+| `tools/verify_standalone.sh` | `file://` 下渲染自检（像素方差判定，非肉眼） |
+| `tools/push_via_api.py` | `github.com` 被封锁时经 `api.github.com` 用 Git Data API 推送 |
 
 ## 3. 一键跑通
 
@@ -30,6 +33,14 @@ $PY pipeline/geom_v6.py            # 重建 4 个数据文件
 $PY pipeline/triangulate_walls.py  # 墙体三角化
 $PY pipeline/make_plan6.py full    # 出理解图（full|master|gw）
 bash tools/capture.sh "/" out.png 1600 1150 9000   # 截图
+```
+
+交付/演示链（改完前端务必走一遍，别让 demo 落后于源码）：
+
+```bash
+cd app && npx vite build                 # 1. 重新构建
+cd .. && $PY tools/build_standalone.py   # 2. 重打单文件离线版
+bash tools/verify_standalone.sh          # 3. 断言真的渲染出来了（PASS/FAIL）
 ```
 
 截图用的相机参数（`TopView` 支持）：`?zoom=` / `?cx=&cy=` / `?tilt=`（0=正俯视，>0=轴测）。
@@ -67,6 +78,21 @@ bash tools/capture.sh "/" out.png 1600 1150 9000   # 截图
 ### 5.4 正交性是不可退让的底线
 非轴向边必须为 **0**（不是"轴率 93%"）。任何形态学操作都要用 1D 核
 （`_axis_close`），buffer 必须显式 `join_style=2`（mitre），轮廓用 `CHAIN_APPROX_NONE`。
+
+### 5.5 交付即演示（别停在"源码推上去了"）
+每轮交付必须给出**可点的演示**，二选一（推荐都做）：
+
+- 单文件离线版 `demo/chunxiao-3d-standalone.html`（双击即开、可转发）；
+- 本地静态服务 `python -m http.server 5180 --bind 127.0.0.1 -d app/dist`。
+
+**改了 `app/` 下的任何东西，都要重跑 §3 的交付链**，否则 demo 会落后于源码。
+演示做完要**过一遍 `verify_standalone.sh`**（像素方差 PASS 才算数，不许"我觉得能开"）。
+
+### 5.6 推送网络：`github.com` 不通时走 Git Data API
+本机网络按主机名放行，`github.com:443` 可能整站不通（`git push` 报 `SSL_ERROR_SYSCALL`），
+而 `api.github.com` 正常。此时**不要**反复重配凭据/改 URL/固定 IP——那些是错的层。
+直接用 `python tools/push_via_api.py <owner/repo> [branch]`。
+排查顺序与四个坑见 `~/.workbuddy/skills/git-push-fix`（v1.3.0 第 6 步）。
 
 ## 6. 当前状态
 

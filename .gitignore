@@ -4,11 +4,12 @@ app/dist/
 app/.vite/
 
 # ── 运行期临时文件 ───────────────────────────────────────────
-data/_edge_profile/
-data/_vite.log
-data/_edge.log
-data/_bak/
+data/_*
 data/*.png
+
+# ── 单文件演示页是构建产物，可由 tools/build_standalone.py 重生成 ──
+# （当前保留入库，方便 clone 后直接双击；如需瘦身可取消下一行注释）
+# demo/
 
 # ── 大体积中间产物（可由 pipeline 一键重跑生成） ───────────────
 *.npy
@@ -28,3 +29,6 @@ assets/chunxiao.dwg
 # ── 系统 ─────────────────────────────────────────────────────
 .DS_Store
 Thumbs.db
+
+# ── 助手本地工作记忆（非项目交付物，不进公开仓库） ────────────
+.workbuddy/

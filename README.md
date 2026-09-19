@@ -45,6 +45,26 @@ cd app && npm install && npx vite  # 4. 打开 3D，俯视 ↔ 第一人称漫�
 3D 视角参数：`?zoom=` `?cx=&cy=` `?tilt=`（0 正俯视 / >0 轴测）、
 `?mode=walk`（第一人称）、`?debug=wall|door|floor`（单层诊断）。
 
+## 立即看 3D（不用装环境）
+
+**方式一：单文件离线版（推荐，双击即开、可随便转发）**
+
+`demo/chunxiao-3d-standalone.html` 把整个 3D 应用（React + three.js 全部内联）
+压成**一个 0.96 MB 的 HTML**，双击用浏览器打开即可，不需要服务器、不需要联网。
+
+```bash
+$PY tools/build_standalone.py                 # 从 app/dist 重新打包
+bash tools/verify_standalone.sh               # file:// 下真实渲染自检（像素方差判定）
+```
+
+**方式二：本地静态服务**
+
+```bash
+cd app && npx vite build                        # 产物落在 app/dist
+python -m http.server 5180 --bind 127.0.0.1 -d app/dist
+# 打开 http://127.0.0.1:5180/（同样支持 ?tilt=55 等参数）
+```
+
 ## 管线
 
 ```
@@ -87,7 +107,10 @@ Vite + React + react-three-fiber。
 assets/chunxiao.pdf     矢量 PDF（管线主源）
 pipeline/               全部 Python 管线与诊断工具
 app/                    Vite + React + r3f 前端
+demo/                   单文件离线演示页（构建产物）
 tools/capture.sh        一条命令自管理截图（vite + headless Edge CDP）
+tools/build_standalone.py  把 app/dist 打成单文件 HTML
+tools/verify_standalone.sh file:// 渲染自检
 data/v6/                中间图与理解图
 RUN-LOG.md              逐轮工作日志（含每个坑的根因与修法）
 AGENTS.md               协作约定与人工裁定表
