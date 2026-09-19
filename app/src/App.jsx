@@ -321,17 +321,24 @@ function SkyDome({ cx, cy, radius = 1400 }) {
   )
 }
 
-/* 地坪 + 街道网格：给"多高"一个可量测的参照（每格 5m）。 */
+/* 地坪 + 两级街道网格：给"多高"一个可量测的参照。
+   5m 细格读尺度，50m 粗格当"主干道"——单一一层网格从 48m 高看会糊成一张纸。
+
+   ⚠️ 地坪**不接收阴影**（故意不加 `receiveShadow`）：太阳的阴影正交框只有 ±15，
+   而户型的影子被 48m 的高差甩到五六十米外的地面上，早已出框 —— 采样 UV 被 clamp，
+   远处地上会留下一块边缘生硬的"影块"，看着像凭空多了一截墙。 */
 function Ground({ cx, cy }) {
   const S = 900
   return (
     <group position={[cx, GROUND_Y, cy]}>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+      <mesh rotation={[-Math.PI / 2, 0, 0]}>
         <planeGeometry args={[S, S]} />
-        <meshStandardMaterial color="#8d9899" roughness={1} />
+        <meshStandardMaterial color="#78838a" roughness={1} />
       </mesh>
-      <gridHelper args={[S, S / 5, '#6f7a7c', '#7d888a']}
-        position={[0, 0.06, 0]} material-transparent material-opacity={0.5} />
+      <gridHelper args={[S, S / 5, '#66727a', '#727e86']}
+        position={[0, 0.06, 0]} material-transparent material-opacity={0.45} />
+      <gridHelper args={[S, S / 50, '#4f5a61', '#4f5a61']}
+        position={[0, 0.12, 0]} material-transparent material-opacity={0.60} />
     </group>
   )
 }
@@ -348,7 +355,11 @@ function mulberry32(seed) {
 
 /* 远景城市剪影：环形撒点，避开正中的自家楼位。
    高度刻意压在自己这层（+48m 地坪以上）附近或以下 —— 否则几十栋比你还高的
-   楼会把天空完全糊死；留出屋顶线与天空，高空感才出得来。 */
+   楼会把天空完全糊死；留出屋顶线与天空，高空感才出得来。
+
+   ⚠️ 剪影**不做半透明**：原先 `transparent opacity=0.92` + 高亮度 HSL（L 0.52~0.68）
+   会让 165 栋楼互相叠加、又与天空混色，远看是一坨惨白的浮板。
+   改为不透明 + 压低明度、拉开饱和度后，楼与楼之间才有前后层次。 */
 const SKYLINE = (() => {
   const rnd = mulberry32(20260919)
   const out = []
@@ -376,12 +387,11 @@ function Skyline({ cx, cy }) {
   return (
     <group position={[cx, GROUND_Y, cy]}>
       {SKYLINE.map((b, i) => {
-        const c = new THREE.Color().setHSL(0.58, 0.06 + b.k * 0.05, 0.52 + b.k * 0.16)
+        const c = new THREE.Color().setHSL(0.60, 0.13 + b.k * 0.10, 0.35 + b.k * 0.20)
         return (
           <mesh key={i} position={[b.x, b.h / 2, b.z]} castShadow={false}>
             <boxGeometry args={[b.w, b.h, b.d]} />
-            <meshStandardMaterial color={c} roughness={0.95} metalness={0}
-              transparent opacity={0.92} />
+            <meshStandardMaterial color={c} roughness={0.95} metalness={0} />
           </mesh>
         )
       })}
@@ -389,25 +399,64 @@ function Skyline({ cx, cy }) {
   )
 }
 
-/* 本楼体量：楼身（地坪→本层）与上部楼层（本层→塔顶），半透明不挡内部。 */
+/* 本层以上的 (26-17)=9 层：**不画半透明体**。
+   原先 above 用 ExtrudeGeometry + opacity 0.11 + depthWrite:false + DoubleSide，
+   斜看时前/后侧壁与顶面反复叠加，而挤出体的分段边界又让叠加层数跳变 ——
+   画面顶部就出现一片"竖条纹幕布"，把天空糊掉。
+   改为「每层一条水平环线 + 四角竖棱」：既明确读出"楼上还有 9 层"，
+   又几乎不占像素，天空与远景得以透出来。 */
+function FloorRings() {
+  const geo = useMemo(() => {
+    const poly = roofData.polygon_m
+    const seg = []
+    const put = (a, y, b) => seg.push(a[0], y, a[1], b[0], y, b[1])
+    // 每标准层楼面高度画一条闭合环线
+    const nAbove = Math.max(0, FLOOR_TOTAL - FLOOR_NO)
+    for (let f = 1; f <= nAbove; f++) {
+      const y = H_WALL + f * H_FLOOR
+      if (y > TOWER_TOP_Y + 1e-6) break
+      for (let i = 0; i < poly.length; i++) put(poly[i], y, poly[(i + 1) % poly.length])
+    }
+    // 四角竖棱：把层层环线串成一个体量，避免看起来像"飘着的相框"
+    let mnx = 1e9, mny = 1e9, mxx = -1e9, mxy = -1e9
+    for (const p of poly) {
+      mnx = Math.min(mnx, p[0]); mny = Math.min(mny, p[1])
+      mxx = Math.max(mxx, p[0]); mxy = Math.max(mxy, p[1])
+    }
+    for (const [x, z] of [[mnx, mny], [mxx, mny], [mxx, mxy], [mnx, mxy]]) {
+      seg.push(x, H_WALL, z, x, TOWER_TOP_Y, z)
+    }
+    const g = new THREE.BufferGeometry()
+    g.setAttribute('position', new THREE.Float32BufferAttribute(seg, 3))
+    return g
+  }, [])
+  return (
+    <lineSegments geometry={geo}>
+      <lineBasicMaterial color="#ded8ce" transparent opacity={0.40}
+        depthWrite={false} toneMapped={false} />
+    </lineSegments>
+  )
+}
+
+/* 本楼体量：楼身（地坪→本层，极淡的半透明壳）＋ 本层以上的楼层环线。
+   ⚠️ 楼身三个参数都是踩过坑的：
+   - `opacity` 必须够低（0.20 时是一根抢眼的"纱柱"，把地面挡没了）；
+   - 不能 `DoubleSide`：前后两个侧壁叠加会让纱幕感翻倍；
+   - 底面要**离地坪 0.1m**：否则挤出体底面与 Ground 平面共面 → z-fighting 锯齿。 */
 function TowerShell() {
   const shape = useMemo(() => shapeFrom(roofData.polygon_m), [])
   const below = useMemo(() => new THREE.ExtrudeGeometry(shape, {
-    depth: -GROUND_Y, bevelEnabled: false, curveSegments: 1,
+    depth: -GROUND_Y - 0.1, bevelEnabled: false, curveSegments: 1,
   }), [shape])
-  const above = useMemo(() => new THREE.ExtrudeGeometry(shape, {
-    depth: Math.max(0.1, TOWER_TOP_Y - H_WALL), bevelEnabled: false, curveSegments: 1,
-  }), [shape])
-  const mat = (op) => <meshStandardMaterial color="#cfc9c0" roughness={0.9}
-    transparent opacity={op} depthWrite={false} side={THREE.DoubleSide} />
   return (
-    <group rotation={[-Math.PI / 2, 0, 0]}>
-      <mesh geometry={below} position={[0, 0, GROUND_Y]}>
-        {mat(0.16)}
-      </mesh>
-      <mesh geometry={above} position={[0, 0, H_WALL + 0.02]}>
-        {mat(0.11)}
-      </mesh>
+    <group>
+      <group rotation={[-Math.PI / 2, 0, 0]}>
+        <mesh geometry={below} position={[0, 0, GROUND_Y + 0.1]}>
+          <meshStandardMaterial color="#c6c0b6" roughness={0.9}
+            transparent opacity={0.11} depthWrite={false} />
+        </mesh>
+      </group>
+      <FloorRings />
     </group>
   )
 }
@@ -638,9 +687,9 @@ export default function App() {
         {envOn
           ? <fog attach="fog" args={['#e3eaf2', 70, 700]} />   // 与穹顶地平线色对齐，让地平线化进雾里
           : <color attach="background" args={['#cfe3f2']} />}
-        <hemisphereLight args={['#ffffff', '#c8c2b8', envOn ? 0.78 : 0.62]} />
+        <hemisphereLight args={['#ffffff', '#c8c2b8', envOn ? 0.68 : 0.62]} />
         <SunLight cx={ext.cx} cy={ext.cy} castShadow={mode !== 'top'} />
-        <ambientLight intensity={envOn ? 0.40 : 0.5} />
+        <ambientLight intensity={envOn ? 0.30 : 0.5} />
 
         {mode === 'top' && <TopView ext={ext} />}
         {mode === 'orbit' && <OrbitView ext={ext} />}
