@@ -41,6 +41,12 @@ data/v6/shot_env4*.png
 data/v6/shot_topCheck.png
 data/v6/shot_walkCheck.png
 data/v6/crop_*.png
+# 第 13 轮室内细节升级：定稿覆盖到 shot_envDefault / shot_envTop / shot_innerWood，
+# 视角对比图 cmp_angles.png 作为「为何把默认仰角从 14° 提到 36°」的证据留档，
+# 其余调参中间图用完即弃
+data/v6/shot_mat*.png
+data/v6/shot_ang*.png
+data/v6/cmp_modes.png
 
 # ── 原始素材：只保留矢量 PDF（管线主源），其余为大文件/未使用 ──
 assets/walkthrough.mp4

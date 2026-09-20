@@ -43,13 +43,215 @@ const TINT = {
 }
 const tint = (n) => TINT[n] || '#e8e8e8'
 
+/* 按房间名归类面层。本图房间名自带用途（主卫/次卫/公卫/客厅阳台/瑶瑶衣帽间…），
+   直接按关键字判，比再引入一个 type 字段更省事、也不会与管线口径打架。
+
+   ⚠️ LDK 是**合并房间**（客厅+餐厅+厨房共 52.61 m²）：厨房区在几何上切不出来，
+      故整间按木地板处理 —— 宁可不切，也好过切歪。 */
+function floorKind(name) {
+  const n = name || ''
+  if (n.includes('阳台') || n.includes('卫')) return 'tile'
+  if (n.includes('电梯') || n.includes('楼梯')) return 'concrete'
+  return 'wood'
+}
+
+/* 程序化面层纹理（canvas 现画，零外部图片资源 —— 单文件离线版不打折）。
+   tiling 尺寸刻意取砖/板宽的整数倍，平铺时才不会出现半块砖、错位缝：
+     wood  canvas 代表 3.2 m²，16 条 × 0.2 m 板宽
+     tile  canvas 代表 2.4 m²，4×4 块 × 0.6 m 方砖 */
+const FLOOR_TILE_M = { wood: 3.2, tile: 2.4 }
+const _floorTex = {}
+
+function floorTexture(kind) {
+  if (_floorTex[kind]) return _floorTex[kind]
+  const S = 1024
+  const cv = document.createElement('canvas')
+  cv.width = cv.height = S
+  const g = cv.getContext('2d')
+  const rnd = mulberry32(kind === 'wood' ? 7788 : 4242)
+
+  if (kind === 'wood') {
+    const rows = 16
+    const h = S / rows
+    for (let i = 0; i < rows; i++) {
+      const y = i * h
+      // 每条板底色轻微扰动，避免整片死平
+      g.fillStyle = `hsl(31, 30%, ${Math.round((0.66 + rnd() * 0.14) * 100)}%)`
+      g.fillRect(0, y, S, h)
+      // 木纹细线
+      g.strokeStyle = 'rgba(112,76,38,0.13)'
+      g.lineWidth = 1
+      for (let k = 0; k < 6; k++) {
+        const yy = y + h * (0.12 + 0.76 * rnd())
+        g.beginPath(); g.moveTo(0, yy); g.lineTo(S, yy); g.stroke()
+      }
+      // 板间横缝
+      g.fillStyle = 'rgba(86,56,28,0.50)'
+      g.fillRect(0, y, S, 2)
+      // 每条板的端头竖缝（错缝铺法）
+      for (let x = rnd() * S * 0.5; x < S; x += S * (0.34 + rnd() * 0.42)) {
+        g.fillRect(x, y, 2, h)
+      }
+    }
+  } else {
+    const n = 4
+    const c = S / n
+    for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
+      g.fillStyle = `hsl(198, 7%, ${Math.round((0.87 + rnd() * 0.07) * 100)}%)`
+      g.fillRect(j * c, i * c, c, c)
+    }
+    g.strokeStyle = 'rgba(146,154,158,0.85)'
+    g.lineWidth = 3
+    for (let i = 0; i <= n; i++) {
+      g.beginPath(); g.moveTo(i * c, 0); g.lineTo(i * c, S); g.stroke()
+      g.beginPath(); g.moveTo(0, i * c); g.lineTo(S, i * c); g.stroke()
+    }
+  }
+
+  const t = new THREE.CanvasTexture(cv)
+  t.wrapS = t.wrapT = THREE.RepeatWrapping
+  t.colorSpace = THREE.SRGBColorSpace
+  t.anisotropy = 8
+  _floorTex[kind] = t
+  return t
+}
+
 function RoomFloor({ poly, name }) {
-  const shape = useMemo(() => shapeFrom(poly), [poly])
+  const kind = floorKind(name)
+  const geom = useMemo(() => {
+    const g = new THREE.ShapeGeometry(shapeFrom(poly))
+    if (kind !== 'concrete' && g.attributes.uv) {
+      // 用**世界米数**当 UV：各房间砖/板尺寸才一致，相邻房间的地板"接得上"。
+      // （ShapeGeometry 默认 UV 是按轮廓参数走的，直接贴图会大小不一。）
+      const pos = g.attributes.position
+      const uv = new Float32Array(pos.count * 2)
+      const T = FLOOR_TILE_M[kind]
+      for (let i = 0; i < pos.count; i++) {
+        uv[i * 2] = pos.getX(i) / T
+        uv[i * 2 + 1] = pos.getY(i) / T
+      }
+      g.setAttribute('uv', new THREE.BufferAttribute(uv, 2))
+    }
+    return g
+  }, [poly, kind])
+
   return (
-    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]} receiveShadow>
-      <shapeGeometry args={[shape]} />
-      <meshStandardMaterial color={tint(name)} roughness={0.96} metalness={0} />
+    <mesh geometry={geom} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]} receiveShadow>
+      {kind === 'concrete'
+        ? <meshStandardMaterial color={tint(name)} roughness={0.98} metalness={0} />
+        : <meshStandardMaterial map={floorTexture(kind)}
+            roughness={kind === 'wood' ? 0.70 : 0.34}
+            metalness={kind === 'wood' ? 0 : 0.03} />}
     </mesh>
+  )
+}
+
+/* ---------- 房间名 / 面积标注 ----------
+   认房间靠肉眼比色太费劲，每间挂一块「房名 + 面积」牌。
+
+   技术选择：**canvas 画中文 → CanvasTexture → sprite**。
+   不用 drei 的 <Text>：它底层是 troika，默认只打包拉丁字体，中文会整片缺字形；
+   而内联一份中文字体动辄好几 MB，单文件离线版会被撑爆。canvas 直接吃系统字体，
+   零依赖、零体积，离线与联机表现一致。
+
+   用 sprite（billboard）而非贴地平面：任何视角都正对相机，斜看也读得清。 */
+const LABEL_CACHE = {}
+
+function labelTexture(name, area) {
+  const key = `${name}|${area}`
+  if (LABEL_CACHE[key]) return LABEL_CACHE[key]
+  const W = 512, H = 168
+  const cv = document.createElement('canvas')
+  cv.width = W; cv.height = H
+  const g = cv.getContext('2d')
+  const rr = (x, y, w, h, r) => {
+    g.beginPath()
+    g.moveTo(x + r, y)
+    g.arcTo(x + w, y, x + w, y + h, r)
+    g.arcTo(x + w, y + h, x, y + h, r)
+    g.arcTo(x, y + h, x, y, r)
+    g.arcTo(x, y, x + w, y, r)
+    g.closePath()
+  }
+  // 深色半透明底板：在浅色地板、白色瓷砖上都读得清
+  g.fillStyle = 'rgba(26,30,34,0.66)'
+  rr(4, 4, W - 8, H - 8, 26); g.fill()
+  g.strokeStyle = 'rgba(255,255,255,0.28)'; g.lineWidth = 3
+  rr(4, 4, W - 8, H - 8, 26); g.stroke()
+
+  const CJK = '"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Noto Sans CJK SC",sans-serif'
+  g.textAlign = 'center'; g.textBaseline = 'middle'
+  g.fillStyle = '#ffffff'
+  g.font = `bold 64px ${CJK}`
+  g.fillText(name, W / 2, 62)
+  g.fillStyle = '#ffd98a'
+  g.font = `46px ${CJK}`
+  g.fillText(`${area} m²`, W / 2, 124)
+
+  const t = new THREE.CanvasTexture(cv)
+  t.colorSpace = THREE.SRGBColorSpace
+  t.anisotropy = 8
+  LABEL_CACHE[key] = t
+  return t
+}
+
+/* 多边形**面积加权质心**（对 L 形 / 凹多边形比"顶点平均"稳得多，
+   顶点平均会被密集顶点那一侧拽偏）。 */
+function polyCentroid(poly) {
+  let a = 0, cx = 0, cy = 0
+  for (let i = 0; i < poly.length; i++) {
+    const [x0, y0] = poly[i]
+    const [x1, y1] = poly[(i + 1) % poly.length]
+    const f = x0 * y1 - x1 * y0
+    a += f; cx += (x0 + x1) * f; cy += (y0 + y1) * f
+  }
+  a *= 0.5
+  if (Math.abs(a) < 1e-9) return poly[0]
+  return [cx / (6 * a), cy / (6 * a)]
+}
+
+function pointInPoly(x, y, poly) {
+  let inside = false
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const xi = poly[i][0], yi = poly[i][1]
+    const xj = poly[j][0], yj = poly[j][1]
+    if ((yi > y) !== (yj > y) && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) inside = !inside
+  }
+  return inside
+}
+
+/* 锚点：质心 → bbox 中心 → 首个顶点（逐级回退）。
+   公卫是 L 形，凹多边形的质心偶尔会落在轮廓外，必须校验。 */
+function labelAnchor(poly) {
+  const c = polyCentroid(poly)
+  if (pointInPoly(c[0], c[1], poly)) return c
+  let mnx = 1e9, mny = 1e9, mxx = -1e9, mxy = -1e9
+  for (const p of poly) {
+    mnx = Math.min(mnx, p[0]); mny = Math.min(mny, p[1])
+    mxx = Math.max(mxx, p[0]); mxy = Math.max(mxy, p[1])
+  }
+  const b = [(mnx + mxx) / 2, (mny + mxy) / 2]
+  return pointInPoly(b[0], b[1], poly) ? b : poly[0]
+}
+
+/* sprite 是 billboard：永远正对相机，文字上下由相机 up 决定 ——
+   环视与正交俯视两种视角都试拍过，无需额外翻转。
+
+   尺寸两重自适应：
+   ① **按房间面积**缩（小房间挂大牌子会盖住邻间）——2.24㎡ 的公卫与 52.61㎡ 的
+      LDK 用同一尺寸，俯视图里前者会糊到隔壁去；
+   ② **按视角**缩 —— 环视是透视，标签会被投影挤向画面中央，比正交俯视更需要收敛。 */
+function RoomLabel({ poly, name, area, mode }) {
+  const tex = useMemo(() => labelTexture(name, area), [name, area])
+  const a = useMemo(() => labelAnchor(poly), [poly])
+  const top = mode === 'top'
+  const k = Math.min(1, Math.max(0.56, Math.pow(area / 18, 0.26)))
+  const w = (top ? 2.05 : 1.58) * k
+  return (
+    <sprite position={[a[0], top ? 0.78 : 1.55, a[1]]} scale={[w, w * 0.328, 1]} renderOrder={20}>
+      <spriteMaterial map={tex} transparent depthTest={false} depthWrite={false}
+        toneMapped={false} />
+    </sprite>
   )
 }
 
@@ -510,15 +712,19 @@ function TopView({ ext }) {
    URL 参数（便于分享/自动截图）：
      ?mode=orbit            进入本视角（也是默认）
      ?az=25                 方位角（度）。0 = 从南侧看（+z），逆时针为正
-     ?el=20                 仰角（度）。90 = 正俯视；默认压得较低，好把
-                            天空与远景城市一起收进画面（高仰角会只剩地面）
-     ?dist=1.5              取景距离系数 */
+     ?el=36                 仰角（度）。90 = 正俯视。
+                            第 13 轮实测后由 14 提到 36：14° 时视线被 2.9m 的墙完全
+                            挡住，**室内地面根本看不见**（地面分区材质等于白做）；
+                            36° 能同时看清室内地面与远景城市，是两者的平衡点。
+                            三档对比见 `data/v6/cmp_angles.png`（28/36/44），
+                            44° 已经把天空吃掉，故取 36。
+     ?dist=1.10             取景距离系数 */
 function OrbitView({ ext }) {
   const q = useMemo(() => new URLSearchParams(window.location.search), [])
   const num = (k, d) => (q.has(k) ? parseFloat(q.get(k)) : d)
   const az = num('az', 25)
-  const el = Math.max(4, Math.min(84, num('el', 14)))
-  const distK = Math.abs(num('dist', 1.55)) || 1.55
+  const el = Math.max(4, Math.min(84, num('el', 36)))
+  const distK = Math.abs(num('dist', 1.10)) || 1.10
   const R = Math.max(ext.w, ext.h) * 1.25 * distK
   const elr = (el * Math.PI) / 180
   const azr = (az * Math.PI) / 180
@@ -605,6 +811,12 @@ export default function App() {
   // 诊断开关：?debug=wall | door | floor —— 用于判定渲染瑕疵归属哪个 mesh
   const debug = useMemo(
     () => new URLSearchParams(window.location.search).get('debug'), [])
+
+  // 房间标注：默认开，?labels=0 关。第一人称贴地行走时强制关
+  // （牌子挂在 0.78m 高，正常视高 1.62m 会糊在脸上挡路）。
+  const [labels, setLabels] = useState(
+    () => new URLSearchParams(window.location.search).get('labels') !== '0')
+  const labelsOn = labels && mode !== 'walk'
   const showWall = !debug || debug === 'wall'
   const showDoor = !debug || debug === 'door'
   const showFloor = !debug || debug === 'floor'
@@ -673,8 +885,14 @@ export default function App() {
             }}>{label}</button>
           ))}
         </div>
-        <div style={{ marginTop: 8 }}>
+        <div style={{ marginTop: 8, display: 'flex', gap: 6, flexWrap: 'wrap' }}>
           <button onClick={exportJson} style={{ padding: '5px 9px' }}>导出 JSON</button>
+          <button onClick={() => setLabels((v) => !v)} style={{
+            padding: '5px 9px', borderRadius: 5, cursor: 'pointer', font: 'inherit',
+            border: labels ? '1px solid #7fb2ff' : '1px solid rgba(255,255,255,0.18)',
+            background: labels ? 'rgba(127,178,255,0.30)' : 'rgba(255,255,255,0.08)',
+            color: '#fff',
+          }}>房间标注 {labels ? '开' : '关'}</button>
         </div>
         <div style={{ marginTop: 6, fontSize: 12, color: '#bcd', maxWidth: 250 }}>
           {mode === 'orbit' && '拖动旋转 · 滚轮缩放 · 右键平移（外部环境已渲染）'}
@@ -710,6 +928,10 @@ export default function App() {
         ))}
         {showDoor && graph.doors.map((d) => <DoorUnit key={d.id} door={d} roomNameOf={roomNameOf} />)}
         {showDoor && (graph.windows || []).map((w) => <WindowUnit key={w.id} win={w} />)}
+        {labelsOn && rooms.map((r) => (
+          <RoomLabel key={`lbl-${r.id}`} poly={r.polygon_m} name={r.name}
+            area={r.area_m2} mode={mode} />
+        ))}
         <Surroundings ext={ext} on={envOn} />
         <Roof visible={mode === 'walk'} />
       </Canvas>
